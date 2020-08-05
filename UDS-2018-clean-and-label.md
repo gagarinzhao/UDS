@@ -1,23 +1,36 @@
----
-title: "UDS 2018"
-author: "Gagarin Zhao"
-date: "8/4/2020"
-output: github_document
----
+UDS 2018
+================
+Gagarin Zhao
+8/4/2020
 
 loading knitter and packages:
 
-```{r setup}
+``` r
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+```
+
+    ## -- Attaching packages ------------------------------------------------------- tidyverse 1.3.0 --
+
+    ## v ggplot2 3.3.2     v purrr   0.3.4
+    ## v tibble  3.0.3     v dplyr   1.0.0
+    ## v tidyr   1.1.0     v stringr 1.4.0
+    ## v readr   1.3.1     v forcats 0.5.0
+
+    ## -- Conflicts ---------------------------------------------------------- tidyverse_conflicts() --
+    ## x dplyr::filter() masks stats::filter()
+    ## x dplyr::lag()    masks stats::lag()
+
+``` r
 library(labelled)
 ```
 
 ## R markdown
 
-This is when I imported and cleaned my data. I labeled the relevant variables.
+This is when I imported and cleaned my data. I labeled the relevant
+variables.
 
-```{r import and cleaning center info/table5}
+``` r
 uds2018centerinfo = 
   readxl::read_excel(".\\UDS2018DataDumpLA20Aug2019.xlsx", sheet = "HealthCenterInfo") %>% 
   mutate(HealthCenterName = str_to_title(HealthCenterName), HealthCenterStreetAddress = str_to_title(HealthCenterStreetAddress)) #Fixed all cap center names and street addresses
@@ -111,9 +124,10 @@ var_label(uds2018table5) = list(T5_L1_Ca = "Family Practitioner FTE",
                                 ) 
 ```
 
-Loaded in table 5, removed grant number column, kept only part time and full time staff values.
+Loaded in table 5, removed grant number column, kept only part time and
+full time staff values.
 
-```{r import and cleaning table 5a}
+``` r
 uds2018table5a = 
   readxl::read_excel(".\\UDS2018DataDumpLA20Aug2019.xlsx", sheet = "Table5A") %>% 
   select(-GrantNumber)
@@ -169,8 +183,7 @@ var_label(uds2018table5a) = list(T5A_L1_Ca = "FT/PT Family Physicians Persons",
                                 )
 ```
 
-
-```{r import and cleaning table 6a}
+``` r
 uds2018table6a = 
   readxl::read_excel(".\\UDS2018DataDumpLA20Aug2019.xlsx", sheet = "Table6A") %>% 
   select(-GrantNumber)
@@ -268,13 +281,10 @@ var_label(uds2018table6a) = list(T6a_L1and2_Ca = "Symp/Asymp HIV # Visits",
                                  T6a_L34_Ca = "Dent Rehab # Visits",
                                  T6a_L34_Cb = "Dent Rehab # Patients"
                                  )
-
 ```
 
 Joined health center info, table 5, 5a by BHCMISID:
 
-```{r join tables}
+``` r
 uds2018info.t5.T5A = full_join(uds2018centerinfo, uds2018table5, uds2018table5a, by = "BHCMISID")
-
 ```
-
