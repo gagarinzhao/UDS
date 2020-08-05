@@ -5,9 +5,9 @@ date: "8/4/2020"
 output: html_document
 ---
 
-loading knitter and packages
+loading knitter and packages:
 
-```{r setup, include=FALSE}
+```{r setup}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(labelled)
@@ -20,7 +20,7 @@ This is when I imported and cleaned my data. I labeled the relevant variables.
 ```{r import and cleaning center info/table5}
 uds2018centerinfo = 
   readxl::read_excel(".\\UDS2018DataDumpLA20Aug2019.xlsx", sheet = "HealthCenterInfo") %>% 
-  mutate(HealthCenterName = str_to_title(HealthCenterName), HealthCenterStreetAddress = str_to_title(HealthCenterStreetAddress))
+  mutate(HealthCenterName = str_to_title(HealthCenterName), HealthCenterStreetAddress = str_to_title(HealthCenterStreetAddress)) #Fixed all cap center names and street addresses
 
 
 uds2018table5 = 
@@ -111,6 +111,7 @@ var_label(uds2018table5) = list(T5_L1_Ca = "Family Practitioner FTE",
                                 ) 
 ```
 
+Loaded in table 5, removed grant number column, kept only part time and full time staff values.
 
 ```{r import and cleaning table 5a}
 uds2018table5a = 
@@ -270,8 +271,9 @@ var_label(uds2018table6a) = list(T6a_L1and2_Ca = "Symp/Asymp HIV # Visits",
 
 ```
 
+Joined health center info, table 5, 5a by BHCMISID:
 
-```{r join table 5 and 5a}
+```{r join tables}
 uds2018info.t5.T5A = full_join(uds2018centerinfo, uds2018table5, uds2018table5a, by = "BHCMISID")
 
 ```
