@@ -285,3 +285,11 @@ Export table as an Excel:
 write.xlsx(uds2018info.t5.T5A, "C:\\Users\\GagarinZhao\\Documents\\Work\\UDS\\Data Wrangling\\uds2018info_T5_T5A.xlsx")
 ```
 
+Export years 2016-2018 joined:
+```{r 2016-2018 merge}
+
+uds2016to2018info.t5.T5A = full_join(uds2016info.t5.T5A, uds2017info.t5.T5A, uds2018info.t5.T5A, by = "BHCMISID")
+
+write.xlsx(uds2016to2018info.t5.T5A, "C:\\Users\\GagarinZhao\\Documents\\Work\\UDS\\Data Wrangling\\uds2016to2018info_T5_T5A.xlsx")
+```
+
