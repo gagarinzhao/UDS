@@ -1,7 +1,7 @@
-UDS 2018
+UDS 2016
 ================
 Gagarin Zhao
-8/4/2020
+8/6/2020
 
 loading knitter and packages:
 
@@ -32,16 +32,16 @@ This is when I imported and cleaned my data. I labeled the relevant
 variables.
 
 ``` r
-uds2018centerinfo = 
-  readxl::read_excel(".\\UDS2018DataDumpLA20Aug2019.xlsx", sheet = "HealthCenterInfo") %>% 
+uds2016centerinfo = 
+  readxl::read_excel(".\\UDS2016DataDumpLA21Aug2017.xlsx", sheet = "HealthCenterInfo") %>% 
   mutate(HealthCenterName = str_to_title(HealthCenterName), HealthCenterStreetAddress = str_to_title(HealthCenterStreetAddress)) #Fixed all cap center names and street addresses
 
 
-uds2018table5 = 
-  readxl::read_excel(".\\UDS2018DataDumpLA20Aug2019.xlsx", sheet = "Table5") %>% 
+uds2016table5 = 
+  readxl::read_excel(".\\UDS2016DataDumpLA21Aug2017.xlsx", sheet = "Table5") %>% 
   select(-GrantNumber)
 
-var_label(uds2018table5) = list(T5_L1_Ca = "Family Practitioner FTE",
+var_label(uds2016table5) = list(T5_L1_Ca = "Family Practitioner FTE",
                                 T5_L1_Cb = "Family Practioner Visits",
                                 T5_L2_Ca = "Gen Practitioner FTE",
                                 T5_L2_Cb = "Gen Practitioner Visits",
@@ -129,13 +129,13 @@ Loaded in table 5, removed grant number column, kept only part time and
 full time staff values.
 
 ``` r
-uds2018table5a = 
-  readxl::read_excel(".\\UDS2018DataDumpLA20Aug2019.xlsx", sheet = "Table5A") %>% 
+uds2016table5a = 
+  readxl::read_excel(".\\UDS2016DataDumpLA21Aug2017.xlsx", sheet = "Table5A") %>% 
   select(-GrantNumber)
 
-uds2018table5a = uds2018table5a[,!grepl("Cc$|Cd$",names(uds2018table5a))] #removing locum and on-call staff, only keeping columns a and b
+uds2016table5a = uds2016table5a[,!grepl("Cc$|Cd$",names(uds2016table5a))] #removing locum and on-call staff, only keeping columns a and b
 
-var_label(uds2018table5a) = list(T5A_L1_Ca = "FT/PT Family Physicians Persons",
+var_label(uds2016table5a) = list(T5A_L1_Ca = "FT/PT Family Physicians Persons",
                                 T5A_L1_Cb = "FT/PT Family Physicians Months",
                                 T5A_L2_Ca = "FT/PT Gen Prac Persons",
                                 T5A_L2_Cb = "FT/PT Gen Prac Internist Months",
@@ -185,11 +185,11 @@ var_label(uds2018table5a) = list(T5A_L1_Ca = "FT/PT Family Physicians Persons",
 ```
 
 ``` r
-uds2018table6a = 
-  readxl::read_excel(".\\UDS2018DataDumpLA20Aug2019.xlsx", sheet = "Table6A") %>% 
+uds2016table6a = 
+  readxl::read_excel(".\\UDS2016DataDumpLA21Aug2017.xlsx", sheet = "Table6A") %>% 
   select(-GrantNumber)
 
-var_label(uds2018table6a) = list(T6a_L1and2_Ca = "Symp/Asymp HIV # Visits",
+var_label(uds2016table6a) = list(T6a_L1and2_Ca = "Symp/Asymp HIV # Visits",
                                  T6a_L1and2_Cb = "Symp/Asymp HIV # Patients",
                                  T6a_L3_Ca = "TB # Visits",
                                  T6a_L3_Cb = "TB # Patients",
@@ -287,11 +287,11 @@ var_label(uds2018table6a) = list(T6a_L1and2_Ca = "Symp/Asymp HIV # Visits",
 Joined health center info, table 5, 5a by BHCMISID:
 
 ``` r
-uds2018info.t5.T5A = full_join(uds2018centerinfo, uds2018table5, uds2018table5a, by = "BHCMISID")
+uds2016info.t5.T5A = full_join(uds2016centerinfo, uds2016table5, uds2016table5a, by = "BHCMISID")
 ```
 
 Export table as an Excel:
 
 ``` r
-write.xlsx(uds2018info.t5.T5A, "C:\\Users\\GagarinZhao\\Documents\\Work\\UDS\\Data Wrangling\\uds2018info_T5_T5A.xlsx")
+write.xlsx(uds2016info.t5.T5A, "C:\\Users\\GagarinZhao\\Documents\\Work\\UDS\\Data Wrangling\\uds2016info_T5_T5A.xlsx")
 ```

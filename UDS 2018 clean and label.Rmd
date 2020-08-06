@@ -11,6 +11,7 @@ loading knitter and packages:
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(labelled)
+library(openxlsx)
 ```
 
 ## R markdown
@@ -47,8 +48,8 @@ var_label(uds2018table5) = list(T5_L1_Ca = "Family Practitioner FTE",
                                 T5_L9b_Cb = "PA Visits",
                                 T5_L10_Ca = "CNM FTE",
                                 T5_L10_Cb = "CNM Visits",
-                                T5_L10a_Ca = "TOtal NPs, PAs, CNMs FTE",
-                                T5_L10a_Cb = "TOtal NPs, PAs, CNMs Visits",
+                                T5_L10a_Ca = "Total NPs, PAs, CNMs FTE",
+                                T5_L10a_Cb = "Total NPs, PAs, CNMs Visits",
                                 T5_L11_Ca = "Nurses FTE",
                                 T5_L11_Cb = "Nurses Visits",
                                 T5_L12_Ca = "Other Med Personnel FTE",
@@ -64,7 +65,7 @@ var_label(uds2018table5) = list(T5_L1_Ca = "Family Practitioner FTE",
                                 T5_L17a_Ca = "Dental Therapist FTE",
                                 T5_L17a_Cb = "Dental Therapist Visits",
                                 T5_L18_Ca = "Other Dental Personnel FTE",
-                                T5_L19_Ca = "TOtal Dental Services FTE",
+                                T5_L19_Ca = "Total Dental Services FTE",
                                 T5_L19_Cb = "Total Dental Services Visits",
                                 T5_L19_Cc = "Total Dental Services Patients",
                                 T5_L20_Ca = "Total Mental Health FTE",
@@ -81,8 +82,8 @@ var_label(uds2018table5) = list(T5_L1_Ca = "Family Practitioner FTE",
                                 T5_L22b_Ca = "Optometrist FTE",
                                 T5_L22b_Cb = "Optometrist Visits",
                                 T5_L22c_Ca = "Other Vision Care FTE",
-                                T5_L22d_Ca = "TOtal Vision Services FTE",
-                                T5_L22d_Cb = "TOtal Vision Services Visits",
+                                T5_L22d_Ca = "Total Vision Services FTE",
+                                T5_L22d_Cb = "Total Vision Services Visits",
                                 T5_L22d_Cc = "Total Vision Services Patients",
                                 T5_L23_Ca = "Pharmacy Personnel FTE",
                                 T5_L24_Ca = "Case Managers FTE",
@@ -95,9 +96,9 @@ var_label(uds2018table5) = list(T5_L1_Ca = "Family Practitioner FTE",
                                 T5_L27b_Ca = "Interpretation FTE",
                                 T5_L27c_Ca = "Community Health Worker FTE",
                                 T5_L28_Ca = "Other Enabling SErvices FTE",
-                                T5_L29_Ca = "TOtal Enabling Services FTE",
+                                T5_L29_Ca = "Total Enabling Services FTE",
                                 T5_L29_Cb = "Total Enabling Services Visits",
-                                T5_L29_Cc = "TOtal Enabling Services Patients",
+                                T5_L29_Cc = "Total Enabling Services Patients",
                                 T5_L29a_Ca = "Other Programs FTE",
                                 T5_L29b_Ca = "Quality Improvement FTE",
                                 T5_L30a_Ca = "Management and Support FTE",
@@ -276,5 +277,11 @@ Joined health center info, table 5, 5a by BHCMISID:
 ```{r join tables}
 uds2018info.t5.T5A = full_join(uds2018centerinfo, uds2018table5, uds2018table5a, by = "BHCMISID")
 
+```
+
+Export table as an Excel:
+
+```{r export xlsx}
+write.xlsx(uds2018info.t5.T5A, "C:\\Users\\GagarinZhao\\Documents\\Work\\UDS\\Data Wrangling\\uds2018info_T5_T5A.xlsx")
 ```
 
