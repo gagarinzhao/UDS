@@ -275,7 +275,9 @@ var_label(uds2016table6a) = list(T6a_L1and2_Ca = "Symp/Asymp HIV # Visits",
 Joined health center info, table 5, 5a by BHCMISID:
 
 ```{r join tables}
-uds2016info.t5.T5A = full_join(uds2016centerinfo, uds2016table5, uds2016table5a, by = "BHCMISID")
+uds2016info.t5.T5A = full_join(uds2016centerinfo, uds2016table5, by = "BHCMISID") %>% 
+  full_join(uds2018table5a, by = "BHCMISID")
+
 
 ```
 

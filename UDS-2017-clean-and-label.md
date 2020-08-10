@@ -10,14 +10,14 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-    ## -- Attaching packages ------------------------------------------------------- tidyverse 1.3.0 --
+    ## -- Attaching packages ------------------------------------------------------------------------- tidyverse 1.3.0 --
 
     ## v ggplot2 3.3.2     v purrr   0.3.4
     ## v tibble  3.0.3     v dplyr   1.0.0
     ## v tidyr   1.1.0     v stringr 1.4.0
     ## v readr   1.3.1     v forcats 0.5.0
 
-    ## -- Conflicts ---------------------------------------------------------- tidyverse_conflicts() --
+    ## -- Conflicts ---------------------------------------------------------------------------- tidyverse_conflicts() --
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -122,7 +122,7 @@ var_label(uds2017table5) = list(T5_L1_Ca = "Family Practitioner FTE",
                                 T5_L33_Ca = "Total Facility/Non-Clinical Support Staff FTE",
                                 T5_L34_Ca = "Grand Total FTE",
                                 T5_L34_Cb = "Grand Total Visits"
-                                ) 
+                                )
 ```
 
 Loaded in table 5, removed grant number column, kept only part time and
@@ -287,7 +287,8 @@ var_label(uds2017table6a) = list(T6a_L1and2_Ca = "Symp/Asymp HIV # Visits",
 Joined health center info, table 5, 5a by BHCMISID:
 
 ``` r
-uds2017info.t5.T5A = full_join(uds2017centerinfo, uds2017table5, uds2017table5a, by = "BHCMISID")
+uds2017info.t5.T5A = full_join(uds2017centerinfo, uds2017table5, by = "BHCMISID") %>% 
+  full_join(uds2017table5a, by = "BHCMISID")
 ```
 
 Export table as an Excel:

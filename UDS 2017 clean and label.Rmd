@@ -109,7 +109,7 @@ var_label(uds2017table5) = list(T5_L1_Ca = "Family Practitioner FTE",
                                 T5_L33_Ca = "Total Facility/Non-Clinical Support Staff FTE",
                                 T5_L34_Ca = "Grand Total FTE",
                                 T5_L34_Cb = "Grand Total Visits"
-                                ) 
+                                )
 ```
 
 Loaded in table 5, removed grant number column, kept only part time and full time staff values.
@@ -275,7 +275,9 @@ var_label(uds2017table6a) = list(T6a_L1and2_Ca = "Symp/Asymp HIV # Visits",
 Joined health center info, table 5, 5a by BHCMISID:
 
 ```{r join tables}
-uds2017info.t5.T5A = full_join(uds2017centerinfo, uds2017table5, uds2017table5a, by = "BHCMISID")
+uds2017info.t5.T5A = full_join(uds2017centerinfo, uds2017table5, by = "BHCMISID") %>% 
+  full_join(uds2017table5a, by = "BHCMISID")
+
 
 ```
 

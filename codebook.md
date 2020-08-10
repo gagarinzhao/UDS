@@ -483,7 +483,7 @@ writeData(OUT, sheet = "Table5a", x = UDScodebook.T5a)
 writeData(OUT, sheet = "Table6a", x = UDScodebook.T6a)
 
 # Reorder worksheets
-#worksheetOrder(OUT) <- c(3,2,1)
+#worksheetOrder(OUT) <- c(3,2,1) # no need to reorder at the moment
 
 # Export the file
 saveWorkbook(OUT, "UDScodebook.xlsx", overwrite = TRUE)

@@ -1,0 +1,21 @@
+---
+title: "Stacking all years"
+author: "Gagarin Zhao"
+date: "8/6/2020"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+Export years 2016-2018 joined:
+
+```{r 2016-2018 binding}
+
+uds2016to2018info.t5.T5A = bind_rows(uds2016info.t5.T5A, uds2017info.t5.T5A, uds2018info.t5.T5A)
+
+write.xlsx(uds2016to2018info.t5.T5A, "C:\\Users\\GagarinZhao\\Documents\\Work\\UDS\\Data Wrangling\\uds2016to2018info_T5_T5A.xlsx", overwrite = TRUE)
+```
