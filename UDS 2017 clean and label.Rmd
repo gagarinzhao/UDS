@@ -21,7 +21,8 @@ This is when I imported and cleaned my data. I labeled the relevant variables.
 ```{r import and cleaning center info/table5}
 uds2017centerinfo = 
   readxl::read_excel(".\\UDS2017DataDumpLA14Aug2018.xlsx", sheet = "HealthCenterInfo") %>% 
-  mutate(HealthCenterName = str_to_title(HealthCenterName), HealthCenterStreetAddress = str_to_title(HealthCenterStreetAddress)) #Fixed all cap center names and street addresses
+  mutate(HealthCenterName = str_to_title(HealthCenterName), HealthCenterStreetAddress = str_to_title(HealthCenterStreetAddress)) %>% #Fixed all cap center names and street addresses
+  select(-Azara)
 
 
 uds2017table5 = 

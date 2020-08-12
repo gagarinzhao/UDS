@@ -1,5 +1,5 @@
 ---
-title: "Stacking all years"
+title: "Stacking all years for table 5 and 5a (staffing/tenure)"
 author: "Gagarin Zhao"
 date: "8/6/2020"
 output: github_document
@@ -8,14 +8,171 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(openxlsx)
 ```
 
 
-Export years 2016-2018 joined:
+Export years 2016-2018 joined as XLSX. Following years can be added as time goes on.
+Table 6a (services) will be compiled separately.
 
-```{r 2016-2018 binding}
+```{r Binding all years to date, table 5 + 5a}
 
-uds2016to2018info.t5.T5A = bind_rows(uds2016info.t5.T5A, uds2017info.t5.T5A, uds2018info.t5.T5A)
+uds2016to2018info.t5.T5A = rbind(uds2016info.t5.T5A, uds2017info.t5.T5A, uds2018info.t5.T5A)
 
 write.xlsx(uds2016to2018info.t5.T5A, "C:\\Users\\GagarinZhao\\Documents\\Work\\UDS\\Data Wrangling\\uds2016to2018info_T5_T5A.xlsx", overwrite = TRUE)
 ```
+
+Calculating productivity + renaming for easier usage in PowerBI. Other variables can be quickly added here.
+
+```{r table 5}
+T5_rel_numbers = uds2016to2018info.t5.T5A %>% 
+  mutate(total_phys_vis_by_fte = T5_L8_Cb/T5_L8_Ca, #calculations
+         total_NP_PA_CNM_vis_by_fte = T5_L10a_Cb/T5_L10a_Ca,
+         total_med_vis_by_fte = T5_L15_Cb/T5_L15_Ca,
+         total_med_pat_by_fte = T5_L15_Cc/T5_L15_Ca,
+         total_dental_vis_by_fte = T5_L19_Cb/T5_L19_Ca,
+         total_dental_pat_by_fte = T5_L19_Cc/T5_L19_Ca,
+         total_mental_vis_by_fte = T5_L20_Cb/T5_L20_Ca,
+         total_mental_pat_by_fte = T5_L20_Cc/T5_L20_Ca,
+         total_SUD_vis_by_fte = T5_L21_Cb/T5_L21_Ca,
+         total_SUD_pat_by_fte = T5_L21_Cc/T5_L21_Ca,         
+         total_otherprof_vis_by_fte = T5_L22_Cb/T5_L22_Ca,
+         total_otherprof_pat_by_fte = T5_L22_Cc/T5_L22_Ca,   
+         total_vision_vis_by_fte = T5_L22d_Cb/T5_L22d_Ca,
+         total_vision_pat_by_fte = T5_L22d_Cc/T5_L22d_Ca,
+         total_enabling_vis_by_fte = T5_L29_Cb/T5_L29_Ca,
+         total_enabling_pat_by_fte = T5_L29_Cc/T5_L29_Ca,
+         grand_total_vis_by_fte = T5_L34_Cb/T5_L34_Ca,
+         ## begin renaming
+         phys_fte = T5_L8_Ca,
+         phys_vis = T5_L8_Cb,
+         NP_NPA_CNM_fte = T5_L10a_Ca,
+         NP_NPA_CNM_vis = T5_L10a_Cb,
+         total_med_fte = T5_L15_Ca,
+         total_med_vis = T5_L15_Cb,
+         total_med_pat = T5_L15_Cc,
+         total_dental_fte = T5_L19_Ca,
+         total_dental_vis = T5_L19_Cb,
+         total_dental_pat = T5_L19_Cc,
+         total_mental_fte = T5_L20_Ca,
+         total_mental_vis = T5_L20_Cb,
+         total_mental_pat = T5_L20_Cc,
+         total_SUD_fte = T5_L21_Ca,
+         total_SUD_vis = T5_L21_Cb,
+         total_SUD_pat = T5_L21_Cc,
+         total_otherprof_fte = T5_L22_Ca,
+         total_otherprof_vis = T5_L22_Cb,
+         total_otherprof_pat = T5_L22_Cc,
+         total_vision_fte = T5_L22d_Ca,
+         total_vision_vis = T5_L22d_Cb,
+         total_vision_pat = T5_L22d_Cc,
+         total_enabling_fte = T5_L29_Ca,
+         total_enabling_vis = T5_L29_Cb,
+         total_enabling_pat = T5_L29_Cc,
+         grand_total_fte = T5_L34_Ca,
+         grand_total_vis = T5_L34_Cb
+         ) %>%
+  select(-T5_L1_Ca:-T5A_L30a4_Cb)
+```
+
+Now for Table 5a, column B/A calculations and renaming
+
+```{r table 5a}
+T5a_rel_numbers = uds2016to2018info.t5.T5A %>% 
+  mutate(ftpt_famphys_mo_by_persons = T5A_L1_Cb/T5A_L1_Ca, #calculations
+        ftpt_genprac_mo_by_persons = T5A_L2_Cb/T5A_L2_Ca,
+        ftpt_internist_mo_by_persons = T5A_L3_Cb/T5A_L3_Ca,
+        ftpt_OBGYN_mo_by_persons = T5A_L4_Cb/T5A_L4_Ca,
+        ftpt_ped_mo_by_persons = T5A_L5_Cb/T5A_L5_Ca,
+        ftpt_otherspecphys_mo_by_persons = T5A_L7_Cb/T5A_L7_Ca,
+        ftpt_NP_mo_by_persons = T5A_L9a_Cb/T5A_L9a_Ca,
+        ftpt_PA_mo_by_persons = T5A_L9b_Cb/T5A_L9b_Ca,
+        ftpt_CNM_mo_by_persons = T5A_L10_Cb/T5A_L10_Ca,
+        ftpt_nurse_mo_by_persons = T5A_L11_Cb/T5A_L11_Ca,
+        ftpt_dentist_mo_by_persons = T5A_L16_Cb/T5A_L16_Ca,
+        ftpt_dentalhyg_mo_by_persons = T5A_L17_Cb/T5A_L17_Ca,
+        ftpt_dentalther_mo_by_persons = T5A_L17a_Cb/T5A_L17a_Ca,
+        ftpt_psychiatrist_mo_by_persons = T5A_L20a_Cb/T5A_L20a_Ca,
+        ftpt_psychologist_mo_by_persons = T5A_L20a1_Cb/T5A_L20a1_Ca,
+        ftpt_socialworker_mo_by_persons = T5A_L20a2_Cb/T5A_L20a2_Ca,
+        ftpt_othermentalhealth_mo_by_persons = T5A_L20b_Cb/T5A_L20b_Ca,
+        ftpt_opthalmologist_mo_by_persons = T5A_L22a_Cb/T5A_L22a_Ca,
+        ftpt_optometrist_mo_by_persons = T5A_L22b_Cb/T5A_L22b_Ca,
+        ftpt_CEO_mo_by_persons = T5A_L30a1_Cb/T5A_L30a1_Ca,
+        ftpt_CMO_mo_by_persons = T5A_L30a2_Cb/T5A_L30a2_Ca,
+        ftpt_CFO_mo_by_persons = T5A_L30a3_Cb/T5A_L30a3_Ca,
+        ftpt_CIO_mo_by_persons = T5A_L30a4_Cb/T5A_L30a4_Ca,
+         ## begin renaming
+        ftpt_famphys_persons = T5A_L1_Ca,
+        ftpt_famphys_mo = T5A_L1_Cb,
+        ftpt_genprac_persons = T5A_L2_Ca,
+        ftpt_genprac_mo = T5A_L2_Cb,
+        ftpt_internist_persons = T5A_L3_Ca,
+        ftpt_internist_mo = T5A_L3_Cb,
+        ftpt_OBGYN_persons = T5A_L4_Ca,
+        ftpt_OBGYN_mo = T5A_L4_Cb,
+        ftpt_ped_persons = T5A_L5_Ca,
+        ftpt_ped_mo = T5A_L5_Cb,
+        ftpt_otherspecphys_persons = T5A_L7_Ca,
+        ftpt_otherspecphys_mo = T5A_L7_Cb,
+        ftpt_NP_persons = T5A_L9a_Ca,
+        ftpt_NP_mo = T5A_L9a_Cb,
+        ftpt_PA_persons = T5A_L9b_Ca,
+        ftpt_PA_mo = T5A_L9b_Cb,
+        ftpt_CNM_persons = T5A_L10_Ca,
+        ftpt_CNM_mo = T5A_L10_Cb,
+        ftpt_nurse_persons = T5A_L11_Ca,
+        ftpt_nurse_mo = T5A_L11_Cb,
+        ftpt_dentist_persons = T5A_L16_Ca,
+        ftpt_dentist_mo = T5A_L16_Cb,
+        ftpt_dentalhyg_persons = T5A_L17_Ca,
+        ftpt_dentalhyg_mo = T5A_L17_Cb,
+        ftpt_dentalther_persons = T5A_L17a_Ca,
+        ftpt_dentalther_mo = T5A_L17a_Cb,
+        ftpt_psychiatrist_persons = T5A_L20a_Ca,
+        ftpt_psychiatrist_mo = T5A_L20a_Cb,
+        ftpt_psychologist_persons = T5A_L20a1_Ca,
+        ftpt_psychologist_mo = T5A_L20a1_Cb,
+        ftpt_socialworker_persons = T5A_L20a2_Ca,
+        ftpt_socialworker_mo = T5A_L20a2_Cb,
+        ftpt_othermentalhealth_persons = T5A_L20b_Ca,
+        ftpt_othermentalhealth_mo = T5A_L20b_Cb,
+        ftpt_opthalmologist_persons = T5A_L22a_Ca,
+        ftpt_opthalmologist_mo = T5A_L22a_Cb,
+        ftpt_optometrist_persons = T5A_L22b_Ca,
+        ftpt_optometrist_mo = T5A_L22b_Cb,
+        ftpt_CEO_persons = T5A_L30a1_Ca,
+        ftpt_CEO_mo = T5A_L30a1_Cb,
+        ftpt_CMO_persons = T5A_L30a2_Ca,
+        ftpt_CMO_mo = T5A_L30a2_Cb,
+        ftpt_CFO_persons = T5A_L30a3_Ca,
+        ftpt_CFO_mo = T5A_L30a3_Cb,
+        ftpt_CIO_persons = T5A_L30a4_Ca,
+        ftpt_CIO_mo = T5A_L30a4_Cb
+         ) %>%
+  select(-T5_L1_Ca:-T5A_L30a4_Cb)
+```
+
+
+Export excel sheet with only relevant variables for tables 5 and 5a 2016-2018:
+
+```{r}
+# Create a blank workbook
+OUT <- createWorkbook()
+
+# Add some sheets to the workbook
+addWorksheet(OUT, "Table5")
+addWorksheet(OUT, "Table5a")
+
+# Write the data to the sheets
+writeData(OUT, sheet = "Table5", x = T5_rel_numbers)
+writeData(OUT, sheet = "Table5a", x = T5a_rel_numbers)
+
+# Reorder worksheets
+#worksheetOrder(OUT) <- c(3,2,1) # no need to reorder at the moment
+
+# Export the file
+saveWorkbook(OUT, "relevant_vars_2016to2018_table5_table5a.xlsx", overwrite = TRUE)
+
+```
+
