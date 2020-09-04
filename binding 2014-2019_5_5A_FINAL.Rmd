@@ -1,0 +1,565 @@
+---
+title: "Stacking 2014-2019"
+author: "Gagarin Zhao"
+date: "9/2/2020"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(openxlsx)
+```
+
+
+Export years 2016-2018 joined as XLSX. Following years can be added as time goes on.
+Table 6a (services) will be compiled separately.
+
+```{r Binding all years to date, table 5 + 5a}
+
+uds2016to2018info.t5.T5A = bind_rows(uds2016info.t5.T5A, uds2017info.t5.T5A, uds2018info.t5.T5A)
+
+write.xlsx(uds2016to2018info.t5.T5A, "C:\\Users\\GagarinZhao\\Documents\\Work\\UDS\\Data Wrangling\\uds2016to2018info_T5_T5A.xlsx", overwrite = TRUE)
+```
+
+
+Pulling 2019 table 5 data, only variables that exist in previous years:
+
+
+```{r pulling 2019}
+uds2019info.t5_rel = uds2019info.t5 %>% 
+  select(BHCMISID,
+         ReportingYear,
+         HealthCenterName,
+         T5_L8_Ca, #table 5
+         T5_L8_Cb,
+         T5_L8_Cb2,
+         T5_L11_Ca,
+         T5_L11_Cb,
+         T5_L11_Cb2,
+         T5_L10a_Ca,
+         T5_L10a_Cb,
+         T5_L10a_Cb2,
+         T5_L15_Ca,
+         T5_L15_Cb,
+         T5_L15_Cb2,
+         T5_L15_Cc,
+         T5_L19_Ca,
+         T5_L19_Cb,
+         T5_L19_Cb2,
+         T5_L19_Cc,
+         T5_L20_Ca,
+         T5_L20_Cb,
+         T5_L20_Cb2,
+         T5_L20_Cc,
+         T5_L21_Ca,
+         T5_L21_Cb,
+         T5_L21_Cb2,
+         T5_L21_Cc,
+         T5_L22_Ca,
+         T5_L22_Cb,
+         T5_L22_Cb2,
+         T5_L22_Cc,
+         T5_L22d_Ca,
+         T5_L22d_Cb,
+         T5_L22d_Cb2,
+         T5_L22d_Cc,
+         T5_L29_Ca,
+         T5_L29_Cb,
+         T5_L29_Cb2,
+         T5_L29_Cc,
+         T5_L34_Ca,
+         T5_L34_Cb,
+         T5_L34_Cb2)
+```
+
+Years 2014 and 2015 columns don't quite match following years. I pull specific columns and do a second bind:
+
+```{r pulling 2014 and 2015}
+uds2014info.t5_rel = uds2014info.t5.T5A %>% 
+  select(BHCMISID,
+         ReportingYear,
+         HealthCenterName,
+         T5_L8_Ca, #table 5
+         T5_L8_Cb,
+         T5_L11_Ca,
+         T5_L11_Cb,
+         T5_L10a_Ca,
+         T5_L10a_Cb,
+         T5_L15_Ca,
+         T5_L15_Cb,
+         T5_L15_Cc,
+         T5_L19_Ca,
+         T5_L19_Cb,
+         T5_L19_Cc,
+         T5_L20_Ca,
+         T5_L20_Cb,
+         T5_L20_Cc,
+         T5_L21_Ca,
+         T5_L21_Cb,
+         T5_L21_Cc,
+         T5_L22_Ca,
+         T5_L22_Cb,
+         T5_L22_Cc,
+         T5_L22d_Ca,
+         T5_L22d_Cb,
+         T5_L22d_Cc,
+         T5_L29_Ca,
+         T5_L29_Cb,
+         T5_L29_Cc,
+         T5_L34_Ca,
+         T5_L34_Cb)
+
+#T5A
+uds2014info.t5A_rel = uds2014info.t5.T5A %>% 
+  select(BHCMISID,
+         ReportingYear,
+         HealthCenterName,
+         T5A_L1_Ca,
+         T5A_L1_Cb,
+         T5A_L2_Ca,
+         T5A_L2_Cb,
+         T5A_L3_Ca,
+         T5A_L3_Cb,
+         T5A_L4_Ca,
+         T5A_L4_Cb,
+         T5A_L5_Ca,
+         T5A_L5_Cb,
+         T5A_L7_Ca,
+         T5A_L7_Cb,
+         T5A_L9a_Ca,
+         T5A_L9a_Cb,
+         T5A_L9b_Ca,
+         T5A_L9b_Cb,
+         T5A_L10_Ca,
+         T5A_L10_Cb,
+         T5A_L11_Ca,
+         T5A_L11_Cb,
+         T5A_L16_Ca,
+         T5A_L16_Cb,
+         T5A_L17_Ca,
+         T5A_L17_Cb,
+        # T5A_L17a_Ca, does not exist this year
+        # T5A_L17a_Cb,
+         T5A_L20a_Ca,
+         T5A_L20a_Cb,
+         T5A_L20a1_Ca,
+         T5A_L20a1_Cb,
+         T5A_L20a2_Ca,
+         T5A_L20a2_Cb,
+         T5A_L20b_Ca,
+         T5A_L20b_Cb,
+         T5A_L22a_Ca,
+         T5A_L22a_Cb,
+         T5A_L22b_Ca,
+         T5A_L22b_Cb,
+         T5A_L30a1_Ca,
+         T5A_L30a1_Cb,
+         T5A_L30a2_Ca,
+         T5A_L30a2_Cb,
+         T5A_L30a3_Ca,
+         T5A_L30a3_Cb,
+         T5A_L30a4_Ca,
+         T5A_L30a4_Cb)
+
+uds2015info.t5_rel = uds2015info.t5.T5A %>% 
+  select(BHCMISID,
+         ReportingYear,
+         HealthCenterName,
+         T5_L8_Ca, #table 5
+         T5_L8_Cb,
+         T5_L11_Ca,
+         T5_L11_Cb,
+         T5_L10a_Ca,
+         T5_L10a_Cb,
+         T5_L15_Ca,
+         T5_L15_Cb,
+         T5_L15_Cc,
+         T5_L19_Ca,
+         T5_L19_Cb,
+         T5_L19_Cc,
+         T5_L20_Ca,
+         T5_L20_Cb,
+         T5_L20_Cc,
+         T5_L21_Ca,
+         T5_L21_Cb,
+         T5_L21_Cc,
+         T5_L22_Ca,
+         T5_L22_Cb,
+         T5_L22_Cc,
+         T5_L22d_Ca,
+         T5_L22d_Cb,
+         T5_L22d_Cc,
+         T5_L29_Ca,
+         T5_L29_Cb,
+         T5_L29_Cc,
+         T5_L34_Ca,
+         T5_L34_Cb)
+
+#table 5a
+
+uds2015info.t5A_rel = uds2015info.t5.T5A %>% 
+  select(BHCMISID,
+         ReportingYear,
+         HealthCenterName,         
+         T5A_L1_Ca,
+         T5A_L1_Cb,
+         T5A_L2_Ca,
+         T5A_L2_Cb,
+         T5A_L3_Ca,
+         T5A_L3_Cb,
+         T5A_L4_Ca,
+         T5A_L4_Cb,
+         T5A_L5_Ca,
+         T5A_L5_Cb,
+         T5A_L7_Ca,
+         T5A_L7_Cb,
+         T5A_L9a_Ca,
+         T5A_L9a_Cb,
+         T5A_L9b_Ca,
+         T5A_L9b_Cb,
+         T5A_L10_Ca,
+         T5A_L10_Cb,
+         T5A_L11_Ca,
+         T5A_L11_Cb,
+         T5A_L16_Ca,
+         T5A_L16_Cb,
+         T5A_L17_Ca,
+         T5A_L17_Cb,
+         # T5A_L17a_Ca,
+         # T5A_L17a_Cb, does exist this year
+         T5A_L20a_Ca,
+         T5A_L20a_Cb,
+         T5A_L20a1_Ca,
+         T5A_L20a1_Cb,
+         T5A_L20a2_Ca,
+         T5A_L20a2_Cb,
+         T5A_L20b_Ca,
+         T5A_L20b_Cb,
+         T5A_L22a_Ca,
+         T5A_L22a_Cb,
+         T5A_L22b_Ca,
+         T5A_L22b_Cb,
+         T5A_L30a1_Ca,
+         T5A_L30a1_Cb,
+         T5A_L30a2_Ca,
+         T5A_L30a2_Cb,
+         T5A_L30a3_Ca,
+         T5A_L30a3_Cb,
+         T5A_L30a4_Ca,
+         T5A_L30a4_Cb
+         )
+
+#uds2014to2019info.t5.T5A = bind_rows(uds2016to2018info.t5.T5A, uds2014info.t5.T5A_rel, uds2015info.t5.T5A_rel)
+```
+
+
+Other variables can be quickly added here.
+
+```{r table 5}
+T5_rel_numbers = uds2016to2018info.t5.T5A %>% 
+  select(BHCMISID,
+         ReportingYear,
+         HealthCenterName,
+         T5_L8_Ca, #table 5
+         T5_L8_Cb,
+         T5_L11_Ca,
+         T5_L11_Cb,
+         T5_L10a_Ca,
+         T5_L10a_Cb,
+         T5_L15_Ca,
+         T5_L15_Cb,
+         T5_L15_Cc,
+         T5_L19_Ca,
+         T5_L19_Cb,
+         T5_L19_Cc,
+         T5_L20_Ca,
+         T5_L20_Cb,
+         T5_L20_Cc,
+         T5_L21_Ca,
+         T5_L21_Cb,
+         T5_L21_Cc,
+         T5_L22_Ca,
+         T5_L22_Cb,
+         T5_L22_Cc,
+         T5_L22d_Ca,
+         T5_L22d_Cb,
+         T5_L22d_Cc,
+         T5_L29_Ca,
+         T5_L29_Cb,
+         T5_L29_Cc,
+         T5_L34_Ca,
+         T5_L34_Cb) %>% 
+  bind_rows(uds2014info.t5_rel, uds2015info.t5_rel, uds2019info.t5_rel) %>% #TACK ON 2014, 2015, 2019
+  select(BHCMISID,
+         ReportingYear,
+         HealthCenterName,
+         ## begin renaming
+         phys_fte = T5_L8_Ca,
+         phys_vis = T5_L8_Cb,
+         phys_virt = T5_L8_Cb2,
+         nurses_fte = T5_L11_Ca,
+         nurses_vis = T5_L11_Cb,
+         nurses_virt = T5_L11_Cb2,
+         NP_NPA_CNM_fte = T5_L10a_Ca,
+         NP_NPA_CNM_vis = T5_L10a_Cb,
+         NP_NPA_CNM_virt = T5_L10a_Cb2,
+         total_med_fte = T5_L15_Ca,
+         total_med_vis = T5_L15_Cb,
+         total_med_virt = T5_L15_Cb2,
+         total_med_pat = T5_L15_Cc,
+         total_dental_fte = T5_L19_Ca,
+         total_dental_vis = T5_L19_Cb,
+         total_dental_virt = T5_L19_Cb2,
+         total_dental_pat = T5_L19_Cc,
+         total_mental_fte = T5_L20_Ca,
+         total_mental_vis = T5_L20_Cb,
+         total_mental_virt = T5_L20_Cb2,
+         total_mental_pat = T5_L20_Cc,
+         total_SUD_fte = T5_L21_Ca,
+         total_SUD_vis = T5_L21_Cb,
+         total_SUD_virt = T5_L21_Cb2,
+         total_SUD_pat = T5_L21_Cc,
+         total_otherprof_fte = T5_L22_Ca,
+         total_otherprof_vis = T5_L22_Cb,
+         total_otherprof_virt = T5_L22_Cb2,
+         total_otherprof_pat = T5_L22_Cc,
+         total_vision_fte = T5_L22d_Ca,
+         total_vision_vis = T5_L22d_Cb,
+         total_vision_virt = T5_L22d_Cb2,
+         total_vision_pat = T5_L22d_Cc,
+         total_enabling_fte = T5_L29_Ca,
+         total_enabling_vis = T5_L29_Cb,
+         total_enabling_virt = T5_L29_Cb2,
+         total_enabling_pat = T5_L29_Cc,
+         grand_total_fte = T5_L34_Ca,
+         grand_total_vis = T5_L34_Cb,
+         grand_total_virt = T5_L34_Cb2
+         )
+```
+
+Table 5 addendum that was added in 2019 UDS data:
+
+```{r 2019 table 5 addendum}
+uds2019info.t5_addendum_rel = uds2019info.t5 %>% 
+  select(BHCMISID,
+         ReportingYear,
+         HealthCenterName,
+         mental_phys_personnel = T5_L20a01_Ca1,
+         mental_phys_vis = T5_L20a01_Cb,
+         mental_phys_virt = T5_L20a01_Cb2,
+         mental_phys_pat = T5_L20a01_Cc,
+         mental_NP_personnel = T5_L20a02_Ca1,
+         mental_NP_vis = T5_L20a02_Cb,
+         mental_NP_virt = T5_L20a02_Cb2,
+         mental_NP_pat = T5_L20a02_Cc,
+         mental_PA_personnel = T5_L20a03_Ca1,
+         mental_PA_vis = T5_L20a03_Cb,
+         mental_PA_virt = T5_L20a03_Cb2,
+         mental_PA_pat = T5_L20a03_Cc,
+         mental_CNM_personnel = T5_L20a04_Ca1,
+         mental_CNM_vis = T5_L20a04_Cb,
+         mental_CNM_virt = T5_L20a04_Cb2,
+         mental_CNM_pat = T5_L20a04_Cc,
+         SUD_phys_personnel = T5_L21a_Ca1,
+         SUD_phys_vis = T5_L21a_Cb,
+         SUD_phys_virt = T5_L21a_Cb2,
+         SUD_phys_pat = T5_L21a_Cc,
+         SUD_NP_personnel = T5_L21b_Ca1,
+         SUD_NP_vis = T5_L21b_Cb,
+         SUD_NP_virt = T5_L21b_Cb2,
+         SUD_NP_pat = T5_L21b_Cc,
+         SUD_PA_personnel = T5_L21c_Ca1,
+         SUD_PA_vis = T5_L21c_Cb,
+         SUD_PA_virt = T5_L21c_Cb2,
+         SUD_PA_pat = T5_L21c_Cc,
+         SUD_CNM_personnel = T5_L21d_Ca1,
+         SUD_CNM_vis = T5_L21d_Cb,
+         SUD_CNM_virt = T5_L21d_Cb2,
+         SUD_CNM_pat = T5_L21d_Cc,
+         SUD_psychiatrist_personnel = T5_L21e_Ca1,
+         SUD_psychiatrist_vis = T5_L21e_Cb,
+         SUD_psychiatrist_virt = T5_L21e_Cb2,
+         SUD_psychiatrist_pat = T5_L21e_Cc,
+         SUD_psychologist_personnel = T5_L21f_Ca1,
+         SUD_psychologist_vis = T5_L21f_Cb,
+         SUD_psychologist_virt = T5_L21f_Cb2,
+         SUD_psychologist_pat = T5_L21f_Cc,
+         SUD_socialworker_personnel = T5_L21g_Ca1,
+         SUD_socialworker_vis = T5_L21g_Cb,
+         SUD_socialworker_virt = T5_L21g_Cb2,
+         SUD_socialworker_pat = T5_L21g_Cc,
+         SUD_othermentalprov_personnel = T5_L21h_Ca1,
+         SUD_othermentalprov_vis = T5_L21h_Cb,
+         SUD_othermentalprov_virt = T5_L21h_Cb2,
+         SUD_othermentalprov_pat = T5_L21h_Cc
+         )
+```
+
+
+
+
+Now for Table 5a, column B/A calculations and renaming
+
+```{r table 5a}
+T5a_rel_numbers = uds2016to2018info.t5.T5A %>% 
+  select(#table 5a
+         BHCMISID,
+         ReportingYear,
+         HealthCenterName,
+         T5A_L1_Ca,
+         T5A_L1_Cb,
+         T5A_L2_Ca,
+         T5A_L2_Cb,
+         T5A_L3_Ca,
+         T5A_L3_Cb,
+         T5A_L4_Ca,
+         T5A_L4_Cb,
+         T5A_L5_Ca,
+         T5A_L5_Cb,
+         T5A_L7_Ca,
+         T5A_L7_Cb,
+         T5A_L9a_Ca,
+         T5A_L9a_Cb,
+         T5A_L9b_Ca,
+         T5A_L9b_Cb,
+         T5A_L10_Ca,
+         T5A_L10_Cb,
+         T5A_L11_Ca,
+         T5A_L11_Cb,
+         T5A_L16_Ca,
+         T5A_L16_Cb,
+         T5A_L17_Ca,
+         T5A_L17_Cb,
+         T5A_L17a_Ca,
+         T5A_L17a_Cb,
+         T5A_L20a_Ca,
+         T5A_L20a_Cb,
+         T5A_L20a1_Ca,
+         T5A_L20a1_Cb,
+         T5A_L20a2_Ca,
+         T5A_L20a2_Cb,
+         T5A_L20b_Ca,
+         T5A_L20b_Cb,
+         T5A_L22a_Ca,
+         T5A_L22a_Cb,
+         T5A_L22b_Ca,
+         T5A_L22b_Cb,
+         T5A_L30a1_Ca,
+         T5A_L30a1_Cb,
+         T5A_L30a2_Ca,
+         T5A_L30a2_Cb,
+         T5A_L30a3_Ca,
+         T5A_L30a3_Cb,
+         T5A_L30a4_Ca,
+         T5A_L30a4_Cb
+         ) %>% 
+  bind_rows(uds2014info.T5A_rel,uds2015info.T5A_rel) %>% 
+  mutate(
+        
+         ## begin renaming
+        ftpt_famphys_persons = T5A_L1_Ca,
+        ftpt_famphys_mo = T5A_L1_Cb,
+        ftpt_genprac_persons = T5A_L2_Ca,
+        ftpt_genprac_mo = T5A_L2_Cb,
+        ftpt_internist_persons = T5A_L3_Ca,
+        ftpt_internist_mo = T5A_L3_Cb,
+        ftpt_OBGYN_persons = T5A_L4_Ca,
+        ftpt_OBGYN_mo = T5A_L4_Cb,
+        ftpt_ped_persons = T5A_L5_Ca,
+        ftpt_ped_mo = T5A_L5_Cb,
+        ftpt_otherspecphys_persons = T5A_L7_Ca,
+        ftpt_otherspecphys_mo = T5A_L7_Cb,
+        ftpt_NP_persons = T5A_L9a_Ca,
+        ftpt_NP_mo = T5A_L9a_Cb,
+        ftpt_PA_persons = T5A_L9b_Ca,
+        ftpt_PA_mo = T5A_L9b_Cb,
+        ftpt_CNM_persons = T5A_L10_Ca,
+        ftpt_CNM_mo = T5A_L10_Cb,
+        ftpt_nurse_persons = T5A_L11_Ca,
+        ftpt_nurse_mo = T5A_L11_Cb,
+        ftpt_dentist_persons = T5A_L16_Ca,
+        ftpt_dentist_mo = T5A_L16_Cb,
+        ftpt_dentalhyg_persons = T5A_L17_Ca,
+        ftpt_dentalhyg_mo = T5A_L17_Cb,
+        ftpt_dentalther_persons = T5A_L17a_Ca,
+        ftpt_dentalther_mo = T5A_L17a_Cb,
+        ftpt_psychiatrist_persons = T5A_L20a_Ca,
+        ftpt_psychiatrist_mo = T5A_L20a_Cb,
+        ftpt_psychologist_persons = T5A_L20a1_Ca,
+        ftpt_psychologist_mo = T5A_L20a1_Cb,
+        ftpt_socialworker_persons = T5A_L20a2_Ca,
+        ftpt_socialworker_mo = T5A_L20a2_Cb,
+        ftpt_othermentalhealth_persons = T5A_L20b_Ca,
+        ftpt_othermentalhealth_mo = T5A_L20b_Cb,
+        ftpt_opthalmologist_persons = T5A_L22a_Ca,
+        ftpt_opthalmologist_mo = T5A_L22a_Cb,
+        ftpt_optometrist_persons = T5A_L22b_Ca,
+        ftpt_optometrist_mo = T5A_L22b_Cb,
+        ftpt_CEO_persons = T5A_L30a1_Ca,
+        ftpt_CEO_mo = T5A_L30a1_Cb,
+        ftpt_CMO_persons = T5A_L30a2_Ca,
+        ftpt_CMO_mo = T5A_L30a2_Cb,
+        ftpt_CFO_persons = T5A_L30a3_Ca,
+        ftpt_CFO_mo = T5A_L30a3_Cb,
+        ftpt_CIO_persons = T5A_L30a4_Ca,
+        ftpt_CIO_mo = T5A_L30a4_Cb
+         ) %>% 
+  select(-T5A_L1_Ca:-T5A_L30a4_Cb)
+```
+
+
+
+Add column of shortened health center names:
+
+```{r add shortened HC names}
+HC_short = 
+  readxl::read_excel(".\\UDS_Name_&_HC_Name.xlsx", sheet = "Sheet1") 
+
+T5_rel_numbers = T5_rel_numbers %>% 
+  mutate(HealthCenterName_original = HealthCenterName,
+    HealthCenterName = str_to_title(HealthCenterName)) %>%
+  left_join(HC_short, by = "HealthCenterName") %>% 
+  arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
+                                             
+janitor::remove_empty(T5_rel_numbers, which = c("rows", "cols"), quiet = TRUE)
+
+is.na(T5_rel_numbers) = T5_rel_numbers == "NaN"
+
+
+T5a_rel_numbers = T5a_rel_numbers %>% 
+  mutate(HealthCenterName_original = HealthCenterName,
+    HealthCenterName = str_to_title(HealthCenterName)) %>%
+  left_join(HC_short, by = "HealthCenterName") %>% 
+  arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
+                                             
+janitor::remove_empty(T5a_rel_numbers, which = c("rows", "cols"), quiet = TRUE)
+
+is.na(T5a_rel_numbers) = T5a_rel_numbers == "NaN"
+
+```
+
+
+Export excel sheet with only relevant variables for tables 5 and 5a 2016-2018:
+
+```{r}
+# Create a blank workbook
+OUT <- createWorkbook()
+
+# Add some sheets to the workbook
+addWorksheet(OUT, "Table5")
+addWorksheet(OUT, "Table5a")
+addWorksheet(OUT, "Table5 Addendum (2019 only)")
+
+# Write the data to the sheets
+writeData(OUT, sheet = "Table5", x = T5_rel_numbers)
+writeData(OUT, sheet = "Table5a", x = T5a_rel_numbers)
+writeData(OUT, sheet = "Table5 Addendum (2019 only)", x = uds2019info.t5_addendum_rel)
+
+# Reorder worksheets
+#worksheetOrder(OUT) <- c(3,2,1) # no need to reorder at the moment
+
+# Export the file
+saveWorkbook(OUT, "relevant_vars_2014to2019_table5_table5a_2.xlsx", overwrite = TRUE)
+
+```

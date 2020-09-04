@@ -1,0 +1,715 @@
+---
+title: "Stacking 2014-2019 table 7 demographics"
+author: "Gagarin Zhao"
+date: "9/2/2020"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(openxlsx)
+```
+
+
+Export years 2014-2019 joined as XLSX. Following years can be added as time goes on.
+
+```{r Binding all years to date, table 3a, 3b, 4}
+
+uds2014to2019.t3a.t3b.t4 = bind_rows(uds2014info.t3a.t3b.t4, uds2015info.t3a.t3b.t4, uds2016info.t3a.t3b.t4, uds2017info.t3a.t3b.t4, uds2018info.t3a.t3b.t4, uds2019info.t3a.t3b.t4)
+```
+
+
+selecting and renaming variables in the process
+
+```{r seleting variables}
+uds2014to2019.t3a.t3b.t4_rel = uds2014to2019.t3a.t3b.t4 %>% 
+  select(HealthCenterName,
+         BHCMISID,
+         ReportingYear,
+         #table 3A - age and sex
+         A_male_under_1 = T3a_L1_Ca,
+         A_female_under_1 = T3a_L1_Cb,
+         A_male_age_1 = T3a_L2_Ca,
+         A_female_age_1 = T3a_L2_Cb,
+         A_male_age_2 = T3a_L3_Ca,
+         A_female_age_2 = T3a_L3_Cb,
+         A_male_age_3 = T3a_L4_Ca,
+         A_female_age_3 = T3a_L4_Cb,
+         A_male_age_4 = T3a_L5_Ca,
+         A_female_age_4 = T3a_L5_Cb,
+         A_male_age_5 = T3a_L6_Ca,
+         A_female_age_5 = T3a_L6_Cb,
+         A_male_age_6 = T3a_L7_Ca,
+         A_female_age_6 = T3a_L7_Cb,
+         A_male_age_7 = T3a_L8_Ca,
+         A_female_age_7 = T3a_L8_Cb,
+         A_male_age_8 = T3a_L9_Ca,
+         A_female_age_8 = T3a_L9_Cb,
+         A_male_age_9 = T3a_L10_Ca,
+         A_female_age_9 = T3a_L10_Cb,
+         A_male_age_10 = T3a_L11_Ca,
+         A_female_age_10 = T3a_L11_Cb,
+         A_male_age_11 = T3a_L12_Ca,
+         A_female_age_11 = T3a_L12_Cb,
+         A_male_age_12 = T3a_L13_Ca,
+         A_female_age_12 = T3a_L13_Cb,
+         A_male_age_13 = T3a_L14_Ca,
+         A_female_age_13 = T3a_L14_Cb,
+         A_male_age_14 = T3a_L15_Ca,
+         A_female_age_14 = T3a_L15_Cb,
+         A_male_age_15 = T3a_L16_Ca,
+         A_female_age_15 = T3a_L16_Cb,
+         A_male_age_16 = T3a_L17_Ca,
+         A_female_age_16 = T3a_L17_Cb,
+         A_male_age_17 = T3a_L18_Ca,
+         A_female_age_17 = T3a_L18_Cb,
+         A_male_age_18 = T3a_L19_Ca,
+         A_female_age_18 = T3a_L19_Cb,
+         A_male_age_19 = T3a_L20_Ca,
+         A_female_age_19 = T3a_L20_Cb,
+         A_male_age_20 = T3a_L21_Ca,
+         A_female_age_20 = T3a_L21_Cb,
+         A_male_age_21 = T3a_L22_Ca,
+         A_female_age_21 = T3a_L22_Cb,
+         A_male_age_22 = T3a_L23_Ca,
+         A_female_age_22 = T3a_L23_Cb,
+         A_male_age_23 = T3a_L24_Ca,
+         A_female_age_23 = T3a_L24_Cb,
+         A_male_age_24 = T3a_L25_Ca,
+         A_female_age_24 = T3a_L25_Cb,
+         A_male_age_25_29 = T3a_L26_Ca,
+         A_female_age_25_29 = T3a_L26_Cb,
+         A_male_age_30_34 = T3a_L27_Ca,
+         A_female_age_30_34 = T3a_L27_Cb,
+         A_male_age_35_39 = T3a_L28_Ca,
+         A_female_age_35_39 = T3a_L28_Cb,
+         A_male_age_40_44 = T3a_L29_Ca,
+         A_female_age_40_44 = T3a_L29_Cb,
+         A_male_age_45_49 = T3a_L30_Ca,
+         A_female_age_45_49 = T3a_L30_Cb,
+         A_male_age_50_54 = T3a_L31_Ca,
+         A_female_age_50_54 = T3a_L31_Cb,
+         A_male_age_55_29 = T3a_L32_Ca,
+         A_female_age_55_59 = T3a_L32_Cb,
+         A_male_age_60_64 = T3a_L33_Ca,
+         A_female_age_60_64 = T3a_L33_Cb,
+         A_male_age_65_69 = T3a_L34_Ca,
+         A_female_age_65_69 = T3a_L34_Cb,
+         A_male_age_70_74 = T3a_L35_Ca,
+         A_female_age_70_74 = T3a_L35_Cb,
+         A_male_age_75_79 = T3a_L36_Ca,
+         A_female_age_75_79 = T3a_L36_Cb,
+         A_male_age_80_84 = T3a_L37_Ca,
+         A_female_age_80_84 = T3a_L37_Cb,
+         A_male_age_85plus = T3a_L38_Ca,
+         A_female_age_85plus = T3a_L38_Cb,
+         A_total_male = T3a_L39_Ca,
+         A_total_female = T3a_L39_Cb,
+         
+         #Table 3B - demographic characteristics
+         B_asian_HL = T3b_L1_Ca,
+         B_asian_NHL = T3b_L1_Cb,
+         #B_asian_unreported = T3b_L1_Cc,
+         B_asian_total = T3b_L1_Cd,
+         B_nativehawaiian_HL = T3b_L2a_Ca, 
+         B_nativehawaiian_NHL = T3b_L2a_Cb, 
+         #B_nativehawaiian_unreported = T3b_L2a_Cc,
+         B_nativehawaiian_total = T3b_L2a_Cd,
+         B_otherPI_HL = T3b_L2b_Ca, 
+         B_otherPI_NHL = T3b_L2b_Cb, 
+         #B_otherPI_unreported = T3b_L2b_Cc,
+         B_otherPI_total = T3b_L2b_Cd,
+         B_blackAA_HL = T3b_L3_Ca, 
+         B_blackAA_NHL = T3b_L3_Cb, 
+         #B_blackAA_unreported = T3b_L3_Cc,
+         B_blackAA_total = T3b_L3_Cd,
+         B_nativeamerican_HL = T3b_L4_Ca, 
+         B_nativeamerican_NHL = T3b_L4_Cb, 
+         #B_nativeamerican_unreported = T3b_L4_Cc,
+         B_nativeamerican_total = T3b_L4_Cd,
+         B_white_HL = T3b_L5_Ca, 
+         B_white_NHL = T3b_L5_Cb, 
+         #B_white_unreported = T3b_L5_Cc,
+         B_white_total = T3b_L5_Cd,
+         B_morethanone_HL = T3b_L6_Ca, 
+         B_morethanone_NHL = T3b_L6_Cb, 
+         #B_morethanone_unreported = T3b_L6_Cc,
+         B_morethanone_total = T3b_L6_Cd,
+         B_unreportedrace_HL = T3b_L7_Ca, 
+         B_unreportedrace_NHL = T3b_L7_Cb, 
+         #B_unreportedrace_unreported = T3b_L7_Cc,
+         B_unreportedrace_total = T3b_L7_Cd,
+         B_total_HL = T3b_L8_Ca, 
+         B_total_NHL = T3b_L8_Cb, 
+         #B_total_unreported = T3b_L8_Cc,
+         B_total_pat_demo = T3b_L8_Cd,
+         
+         #ESL
+         B_num_pat_noenglish = T3b_L12_Ca,
+         
+         #sexual orientation
+         C_homosexual = T3b_L13_Ca,
+         C_heterosexual = T3b_L14_Ca,
+         C_bisexual = T3b_L15_Ca,
+         C_other_orientation = T3b_L16_Ca,
+         C_dontknow_orientation = T3b_L17_Ca,
+         C_refused_orientation = T3b_L18_Ca,
+         C_total_pat_orientation = T3b_L19_Ca,
+         
+         #gender identity
+         C_male_identity = T3b_L20_Ca,
+         C_female_identity = T3b_L21_Ca,
+         C_transmale = T3b_L22_Ca,
+         C_transfemale = T3b_L23_Ca,
+         C_other_identity = T3b_L24_Ca,
+         C_refused_identity = T3b_L25_Ca,
+         C_total_pat_identity = T3b_L26_Ca,
+         
+         ## Table 4 - selected patient characteristics
+         
+         #poverty
+         D_pov_100_below = T4_L1_Ca,
+         D_pov_101_150 = T4_L2_Ca,
+         D_pov_151_200 = T4_L3_Ca,
+         D_pov_200 = T4_L4_Ca,
+         D_pov_unknown = T4_L5_Ca,
+         D_pov_total = T4_L6_Ca,
+         
+         #insurance
+         D_uninsured_0_17 = T4_L7_Ca,
+         D_uninsured_18plus = T4_L7_Cb,
+         D_medicaidXIX_0_17 = T4_L8a_Ca,
+         D_medicaidXIX_18plus = T4_L8a_Cb,
+         D_chip_medicaid_0_17 = T4_L8b_Ca,
+         D_chip_medicaid_18plus = T4_L8b_Cb,
+         D_totalmedicaid_0_17 = T4_L8_Ca,
+         D_totalmedicaid_18plus = T4_L8_Cb,
+         D_duallyeligible_0_17 = T4_L9a_Ca,
+         D_duallyeligible_18plus = T4_L9a_Cb,
+         D_medicare_0_17 = T4_L9_Ca,
+         D_medicare_18plus = T4_L9_Cb,
+         D_otherpublicinsurance_0_17 = T4_L10a_Ca,
+         D_otherpublicinsurance_18plus = T4_L10a_Cb,
+         D_otherpublicinsurance_chip_0_17 = T4_L10b_Ca,
+         D_otherpublicinsurance_chip_18plus = T4_L10b_Cb,
+         D_total_public_insurance_0_17 = T4_L10_Ca,
+         D_total_public_insurance_18plus = T4_L10_Cb,
+         D_private_insurance_0_17 = T4_L11_Ca,
+         D_private_insurance_18plus = T4_L11_Cb,
+         D_total_insurance_0_17 = T4_L12_Ca,
+         D_total_insurance_18plus = T4_L12_Cb,
+         
+         #managed care
+         
+         E_capitated_months_medicaid = T4_L13a_Ca,
+         E_capitated_months_medicare = T4_L13a_Cb,
+         E_capitated_months_otherpublic = T4_L13a_Cc,
+         E_capitated_months_private = T4_L13a_Cd,
+         E_capitated_months_total = T4_L13a_Ce,
+         E_FFS_months_medicaid = T4_L13b_Ca,
+         E_FFS_months_medicare = T4_L13b_Cb,
+         E_FFS_months_otherpublic = T4_L13b_Cc,
+         E_FFS_months_private = T4_L13b_Cd,
+         E_FFS_months_total = T4_L13b_Ce,
+         E_total_months_medicaid = T4_L13b_Ca,
+         E_total_months_medicare = T4_L13b_Cb,
+         E_total_months_otherpublic = T4_L13b_Cc,
+         E_total_months_private = T4_L13b_Cd,
+         E_total_months_total = T4_L13b_Ce,
+         
+         #special populations
+         
+         F_migratory_worker = T4_L14_Ca,
+         F_seasonal_worker = T4_L15_Ca,
+         F_total_agri_worker = T4_L16_Ca,
+         F_homeless_shelter = T4_L17_Ca,
+         F_transitional_housing = T4_L18_Ca,
+         F_doublingup = T4_L19_Ca,
+         F_street = T4_L20_Ca,
+         F_perm_supportive_housing = T4_L21a_Ca,
+         F_other_living = T4_L21_Ca,
+         F_unknown_living = T4_L22_Ca,
+         F_total_homeless = T4_L23_Ca,
+         F_total_schoolbased = T4_L24_Ca,
+         F_total_veterans = T4_L25_Ca,
+         F_total_public_housing = T4_L26_Ca
+         )
+
+```
+
+
+Just gender info, pivotting:
+
+```{r}
+uds2014to2019.t3a = uds2014to2019.t3a.t3b.t4 %>% 
+  select(HealthCenterName,
+         BHCMISID,
+         ReportingYear,
+         #table 3A - age and sex
+         A_male_under_1 = T3a_L1_Ca,
+         A_female_under_1 = T3a_L1_Cb,
+         A_male_age_1 = T3a_L2_Ca,
+         A_female_age_1 = T3a_L2_Cb,
+         A_male_age_2 = T3a_L3_Ca,
+         A_female_age_2 = T3a_L3_Cb,
+         A_male_age_3 = T3a_L4_Ca,
+         A_female_age_3 = T3a_L4_Cb,
+         A_male_age_4 = T3a_L5_Ca,
+         A_female_age_4 = T3a_L5_Cb,
+         A_male_age_5 = T3a_L6_Ca,
+         A_female_age_5 = T3a_L6_Cb,
+         A_male_age_6 = T3a_L7_Ca,
+         A_female_age_6 = T3a_L7_Cb,
+         A_male_age_7 = T3a_L8_Ca,
+         A_female_age_7 = T3a_L8_Cb,
+         A_male_age_8 = T3a_L9_Ca,
+         A_female_age_8 = T3a_L9_Cb,
+         A_male_age_9 = T3a_L10_Ca,
+         A_female_age_9 = T3a_L10_Cb,
+         A_male_age_10 = T3a_L11_Ca,
+         A_female_age_10 = T3a_L11_Cb,
+         A_male_age_11 = T3a_L12_Ca,
+         A_female_age_11 = T3a_L12_Cb,
+         A_male_age_12 = T3a_L13_Ca,
+         A_female_age_12 = T3a_L13_Cb,
+         A_male_age_13 = T3a_L14_Ca,
+         A_female_age_13 = T3a_L14_Cb,
+         A_male_age_14 = T3a_L15_Ca,
+         A_female_age_14 = T3a_L15_Cb,
+         A_male_age_15 = T3a_L16_Ca,
+         A_female_age_15 = T3a_L16_Cb,
+         A_male_age_16 = T3a_L17_Ca,
+         A_female_age_16 = T3a_L17_Cb,
+         A_male_age_17 = T3a_L18_Ca,
+         A_female_age_17 = T3a_L18_Cb,
+         A_male_age_18 = T3a_L19_Ca,
+         A_female_age_18 = T3a_L19_Cb,
+         A_male_age_19 = T3a_L20_Ca,
+         A_female_age_19 = T3a_L20_Cb,
+         A_male_age_20 = T3a_L21_Ca,
+         A_female_age_20 = T3a_L21_Cb,
+         A_male_age_21 = T3a_L22_Ca,
+         A_female_age_21 = T3a_L22_Cb,
+         A_male_age_22 = T3a_L23_Ca,
+         A_female_age_22 = T3a_L23_Cb,
+         A_male_age_23 = T3a_L24_Ca,
+         A_female_age_23 = T3a_L24_Cb,
+         A_male_age_24 = T3a_L25_Ca,
+         A_female_age_24 = T3a_L25_Cb,
+         A_male_age_25_29 = T3a_L26_Ca,
+         A_female_age_25_29 = T3a_L26_Cb,
+         A_male_age_30_34 = T3a_L27_Ca,
+         A_female_age_30_34 = T3a_L27_Cb,
+         A_male_age_35_39 = T3a_L28_Ca,
+         A_female_age_35_39 = T3a_L28_Cb,
+         A_male_age_40_44 = T3a_L29_Ca,
+         A_female_age_40_44 = T3a_L29_Cb,
+         A_male_age_45_49 = T3a_L30_Ca,
+         A_female_age_45_49 = T3a_L30_Cb,
+         A_male_age_50_54 = T3a_L31_Ca,
+         A_female_age_50_54 = T3a_L31_Cb,
+         A_male_age_55_59 = T3a_L32_Ca,
+         A_female_age_55_59 = T3a_L32_Cb,
+         A_male_age_60_64 = T3a_L33_Ca,
+         A_female_age_60_64 = T3a_L33_Cb,
+         A_male_age_65_69 = T3a_L34_Ca,
+         A_female_age_65_69 = T3a_L34_Cb,
+         A_male_age_70_74 = T3a_L35_Ca,
+         A_female_age_70_74 = T3a_L35_Cb,
+         A_male_age_75_79 = T3a_L36_Ca,
+         A_female_age_75_79 = T3a_L36_Cb,
+         A_male_age_80_84 = T3a_L37_Ca,
+         A_female_age_80_84 = T3a_L37_Cb,
+         A_male_age_85plus = T3a_L38_Ca,
+         A_female_age_85plus = T3a_L38_Cb,
+         A_total_male = T3a_L39_Ca,
+         A_total_female = T3a_L39_Cb
+  )
+
+#create age categories
+
+uds2014to2019.t3a_cat = uds2014to2019.t3a %>%
+  mutate("a. male Ages 0 - 4" = 
+           A_male_under_1 +
+           A_male_age_1 +
+           A_male_age_2 + 
+           A_male_age_3 +
+           A_male_age_4,
+         "b. male Ages 5 - 9" = 
+           A_male_age_5 +
+           A_male_age_6 +
+           A_male_age_7 +
+           A_male_age_8 +
+           A_male_age_9,
+         "c. male Ages 10 - 14" =
+           A_male_age_10 +
+           A_male_age_11 +
+           A_male_age_12 + 
+           A_male_age_13 + 
+           A_male_age_14,
+         "d. male Ages 15 - 19" =
+           A_male_age_15 +
+           A_male_age_16 + 
+           A_male_age_17 +
+           A_male_age_18 + 
+           A_male_age_19,
+         "e. male Ages 20 - 24" =
+           A_male_age_20 +
+           A_male_age_21 + 
+           A_male_age_22 + 
+           A_male_age_23 +
+           A_male_age_24,
+         "a. female Ages 0 - 4" = 
+           A_female_under_1 +
+           A_female_age_1 +
+           A_female_age_2 + 
+           A_female_age_3 +
+           A_female_age_4,
+         "b. female Ages 5 - 9" = 
+           A_female_age_5 +
+           A_female_age_6 +
+           A_female_age_7 +
+           A_female_age_8 +
+           A_female_age_9,
+         "c. female Ages 10 - 14" =
+           A_female_age_10 +
+           A_female_age_11 +
+           A_female_age_12 + 
+           A_female_age_13 + 
+           A_female_age_14,
+         "d. female Ages 15 - 19" =
+           A_female_age_15 +
+           A_female_age_16 + 
+           A_female_age_17 +
+           A_female_age_18 + 
+           A_female_age_19,
+         "e. female Ages 20 - 24" =
+           A_female_age_20 +
+           A_female_age_21 + 
+           A_female_age_22 + 
+           A_female_age_23 +
+           A_female_age_24) %>% 
+  select(-A_male_under_1:-A_female_age_24) %>% 
+  rename("f. male Ages 25 - 29" = A_male_age_25_29,
+         "g. male Ages 30 - 34" = A_male_age_30_34,
+         "h. male Ages 35 - 39" = A_male_age_35_39,
+         "i. male Ages 40 - 44" = A_male_age_40_44,
+         "j. male Ages 45 - 49" = A_male_age_45_49,
+         "k. male Ages 50 - 54" = A_male_age_50_54,
+         "l. male Ages 55 - 59" = A_male_age_55_59,
+         "m. male Ages 60 - 64" = A_male_age_60_64,
+         "n. male Ages 65 - 69" = A_male_age_65_69,
+         "o. male Ages 70 - 74" = A_male_age_70_74,
+         "p. male Ages 75 - 79" = A_male_age_75_79,
+         "q. male Ages 80 - 84" = A_male_age_80_84,
+         "r. male Ages 85 and over" = A_male_age_85plus,
+         "f. female Ages 25 - 29" = A_female_age_25_29,
+         "g. female Ages 30 - 34" = A_female_age_30_34,
+         "h. female Ages 35 - 39" = A_female_age_35_39,
+         "i. female Ages 40 - 44" = A_female_age_40_44,
+         "j. female Ages 45 - 49" = A_female_age_45_49,
+         "k. female Ages 50 - 54" = A_female_age_50_54,
+         "l. female Ages 55 - 59" = A_female_age_55_59,
+         "m. female Ages 60 - 64" = A_female_age_60_64,
+         "n. female Ages 65 - 69" = A_female_age_65_69,
+         "o. female Ages 70 - 74" = A_female_age_70_74,
+         "p. female Ages 75 - 79" = A_female_age_75_79,
+         "q. female Ages 80 - 84" = A_female_age_80_84,
+         "r. female Ages 85 and over" = A_female_age_85plus,
+)
+         
+sex_pivot = 
+  pivot_longer(
+    uds2014to2019.t3a_cat, 
+    "f. male Ages 25 - 29": "e. female Ages 20 - 24",
+    names_to = "sexage", 
+    values_to = "count")
+
+sex_pivot2 = 
+  sex_pivot %>%
+  mutate(sex = ifelse(grepl("female", sexage), "female", "male"),
+         sexage = str_remove(sexage, "female "),
+         sexage = str_remove(sexage, "male "),
+         sexage = str_remove(sexage, "_female"),
+         sexage = str_remove(sexage, "_male"),) %>% 
+  rename(age = sexage)
+
+sex_pivot3 =
+  pivot_wider(
+    sex_pivot2, 
+    names_from = "sex", 
+    values_from = "count")
+
+```
+
+pivotting race and ethnicity ONLY
+
+```{r}
+uds2014to2019.t3b_race = uds2014to2019.t3a.t3b.t4 %>% 
+  select(HealthCenterName,
+         BHCMISID,
+         ReportingYear,
+  #Table 3B - demographic characteristics
+         "Asian HL" = T3b_L1_Ca,
+         "Asian NHL" = T3b_L1_Cb,
+         #B_asian_unreported = T3b_L1_Cc,
+         "Asian total" = T3b_L1_Cd,
+         "Native Hawaiian HL" = T3b_L2a_Ca, 
+         "Native Hawaiian NHL" = T3b_L2a_Cb, 
+         #B_nativehawaiian_unreported = T3b_L2a_Cc,
+         "Native Hawaiian total" = T3b_L2a_Cd,
+         "Other Pacific Islander HL" = T3b_L2b_Ca, 
+         "Other Pacific Islander NHL" = T3b_L2b_Cb, 
+         #B_otherPI_unreported = T3b_L2b_Cc,
+         "Other Pacific Islander total" = T3b_L2b_Cd,
+         "Black/African American HL" = T3b_L3_Ca, 
+         "Black/African American NHL" = T3b_L3_Cb, 
+         #B_blackAA_unreported = T3b_L3_Cc,
+         "Black/African American total" = T3b_L3_Cd,
+         "Native American HL" = T3b_L4_Ca, 
+         "Native American NHL" = T3b_L4_Cb, 
+         #B_nativeamerican_unreported = T3b_L4_Cc,
+         "Native American total" = T3b_L4_Cd,
+         "White HL" = T3b_L5_Ca, 
+         "White NHL" = T3b_L5_Cb, 
+         #B_white_unreported = T3b_L5_Cc,
+         "White total" = T3b_L5_Cd,
+         "More than one HL" = T3b_L6_Ca, 
+         "More than one NHL" = T3b_L6_Cb, 
+         #B_morethanone_unreported = T3b_L6_Cc,
+         "More than one total" = T3b_L6_Cd,
+         "Unreported HL" = T3b_L7_Ca, 
+         "Unreported NHL" = T3b_L7_Cb, 
+         #"Unreported Race/Ethnicity" = T3b_L7_Cc,
+         "Unreported total" = T3b_L7_Cd,
+         "Total HL" = T3b_L8_Ca, 
+         "Total NHL" = T3b_L8_Cb, 
+         "Total total" = T3b_L8_Cd
+  )
+
+
+eth_pivot = 
+  pivot_longer(
+    uds2014to2019.t3b_race, 
+    "Asian HL": "Total total",
+    names_to = "blank", 
+    values_to = "count")
+
+eth_pivot2 = 
+  eth_pivot %>%
+  mutate(ethnicity = ifelse(grepl("NHL", blank), "Non-Hispanic/Latino",
+                            ifelse(grepl("total", blank), "Total",
+                                   "Hispanic/Latino")),
+         blank = str_remove(blank, " HL"),
+         blank = str_remove(blank, " NHL"),
+         blank = str_remove(blank, " total")) %>% 
+  rename(race = blank)
+
+eth_pivot3 =
+  pivot_wider(
+    eth_pivot2, 
+    names_from = "ethnicity", 
+    values_from = "count")
+
+```
+
+
+pivot insurance only
+
+```{r}
+uds2014to2019.t3b_insurance = uds2014to2019.t3a.t3b.t4 %>% 
+  select(HealthCenterName,
+         BHCMISID,
+         ReportingYear,
+          #insurance
+         "Uninsured Aged 0 - 17" = T4_L7_Ca,
+         "Uninsured Aged 18 and older" = T4_L7_Cb,
+         "Medicaid (Title XIX) Aged 0 - 17" = T4_L8a_Ca,
+         "Medicaid (Title XIX) Aged 18 and older" = T4_L8a_Cb,
+         "CHIP Medicaid Aged 0 - 17" = T4_L8b_Ca,
+         "CHIP Medicaid Aged 18 and older" = T4_L8b_Cb,
+         "Total Medicaid Aged 0 - 17" = T4_L8_Ca,
+         "Total Medicaid Aged 18 and older" = T4_L8_Cb,
+         "Dually Eligible Aged 0 - 17" = T4_L9a_Ca,
+         "Dually Eligible Aged 18 and older" = T4_L9a_Cb,
+         "Medicare Aged 0 - 17" = T4_L9_Ca,
+         "Medicare Aged 18 and older" = T4_L9_Cb,
+         "Other Public Insurance (Non-CHIP) Aged 0 - 17" = T4_L10a_Ca,
+         "Other Public Insurance (Non-CHIP) Aged 18 and older" = T4_L10a_Cb,
+         "Other Public Insurance CHIP Aged 0 - 17" = T4_L10b_Ca,
+         "Other Public Insurance CHIP Aged 18 and older" = T4_L10b_Cb,
+         "Total Public Insurance Aged 0 - 17" = T4_L10_Ca,
+         "Total Public Insurance Aged 18 and older" = T4_L10_Cb,
+         "Private Insurance Aged 0 - 17" = T4_L11_Ca,
+         "Private Insurance Aged 18 and older" = T4_L11_Cb,
+         "Total Aged 0 - 17" = T4_L12_Ca,
+         "Total Aged 18 and older" = T4_L12_Cb
+  )
+
+
+insure_pivot = 
+  pivot_longer(
+    uds2014to2019.t3b_insurance, 
+    "Uninsured Aged 0 - 17": "Total Aged 18 and older",
+    names_to = "blank", 
+    values_to = "count")
+
+insure_pivot2 = 
+  insure_pivot %>%
+  mutate(age = ifelse(grepl("0 - 17", blank), "Aged 0 - 17", "Aged 18 and older"),
+         blank = str_remove(blank, " Aged 0 - 17"),
+         blank = str_remove(blank, " Aged 18 and older")) %>% 
+  rename(insurance = blank)
+
+insure_pivot3 =
+  pivot_wider(
+    insure_pivot2, 
+    names_from = "age", 
+    values_from = "count")
+
+```
+
+pivot managed care:
+
+
+```{r}
+uds2014to2019.t3b_insurance = uds2014to2019.t3a.t3b.t4 %>% 
+  select(HealthCenterName,
+         BHCMISID,
+         ReportingYear,
+                  
+         "Medicaid capitated" = T4_L13a_Ca,
+         "Medicare capitated" = T4_L13a_Cb,
+         "Other Public Including Non-Medicaid CHIP capitated" = T4_L13a_Cc,
+         "Private capitated" = T4_L13a_Cd,
+         "Total capitated" = T4_L13a_Ce,
+         "Medicaid FFS" = T4_L13b_Ca,
+         "Medicare FFS" = T4_L13b_Cb,
+         "Other Public Including Non-Medicaid CHIP FFS" = T4_L13b_Cc,
+         "Private FFS" = T4_L13b_Cd,
+         "Total FFS" = T4_L13b_Ce,
+         "Medicaid total" = T4_L13b_Ca,
+         "Medicare total" = T4_L13b_Cb,
+         "Other Public Including Non-Medicaid CHIP total" = T4_L13b_Cc,
+         "Private total" = T4_L13b_Cd,
+         "Total total" = T4_L13b_Ce
+  )
+
+
+mc_pivot = 
+  pivot_longer(
+    uds2014to2019.t3b_insurance, 
+    "Medicaid capitated": "Total total",
+    names_to = "blank", 
+    values_to = "count")
+
+
+mc_pivot2 =
+  mc_pivot %>%
+  mutate(type = ifelse(grepl("capitated", blank), "Capitated",
+                            ifelse(grepl("total", blank), "Total",
+                                   "FFS")),
+         blank = str_remove(blank, " capitated"),
+         blank = str_remove(blank, " FFS"),
+         blank = str_remove(blank, " total")) %>% 
+  rename(insurance = blank)
+
+mc_pivot3 =
+  pivot_wider(
+    mc_pivot2, 
+    names_from = "type", 
+    values_from = "count")
+
+```
+
+
+
+Add column of shortened health center names:
+
+```{r add shortened HC names}
+HC_short = 
+  readxl::read_excel(".\\UDS_Name_&_HC_Name.xlsx", sheet = "Sheet1") 
+
+uds2014to2019.t3a.t3b.t4_rel = uds2014to2019.t3a.t3b.t4_rel %>% 
+  mutate(HealthCenterName_original = HealthCenterName,
+    HealthCenterName = str_to_title(HealthCenterName)) %>%
+  left_join(HC_short, by = "HealthCenterName") %>% 
+  arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
+                                             
+janitor::remove_empty(uds2014to2019.t3a.t3b.t4_rel, which = c("rows", "cols"), quiet = TRUE)
+
+is.na(uds2014to2019.t3a.t3b.t4_rel) = uds2014to2019.t3a.t3b.t4_rel == "NaN"
+
+sex_pivot3 = sex_pivot3 %>% 
+  mutate(HealthCenterName_original = HealthCenterName,
+    HealthCenterName = str_to_title(HealthCenterName)) %>%
+  left_join(HC_short, by = "HealthCenterName") %>% 
+  arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
+                                             
+janitor::remove_empty(sex_pivot3, which = c("rows", "cols"), quiet = TRUE)
+
+is.na(sex_pivot3) = sex_pivot3 == "NaN"
+
+
+
+eth_pivot3 = eth_pivot3 %>% 
+  mutate(HealthCenterName_original = HealthCenterName,
+    HealthCenterName = str_to_title(HealthCenterName)) %>%
+  left_join(HC_short, by = "HealthCenterName") %>% 
+  arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
+                                             
+janitor::remove_empty(eth_pivot3, which = c("rows", "cols"), quiet = TRUE)
+
+is.na(eth_pivot3) = eth_pivot3 == "NaN"
+
+
+insure_pivot3 = insure_pivot3 %>% 
+  mutate(HealthCenterName_original = HealthCenterName,
+    HealthCenterName = str_to_title(HealthCenterName)) %>%
+  left_join(HC_short, by = "HealthCenterName") %>% 
+  arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
+                                             
+janitor::remove_empty(insure_pivot3, which = c("rows", "cols"), quiet = TRUE)
+
+is.na(insure_pivot3) = insure_pivot3 == "NaN"
+
+mc_pivot3 = mc_pivot3 %>% 
+  mutate(HealthCenterName_original = HealthCenterName,
+    HealthCenterName = str_to_title(HealthCenterName)) %>%
+  left_join(HC_short, by = "HealthCenterName") %>% 
+  arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
+                                             
+janitor::remove_empty(mc_pivot3, which = c("rows", "cols"), quiet = TRUE)
+
+is.na(mc_pivot3) = mc_pivot3 == "NaN"
+```
+
+
+Export excel sheet with only relevant variables for tables 3a 3b 4:
+
+```{r}
+# Create a blank workbook
+OUT <- createWorkbook()
+
+# Add some sheets to the workbook
+addWorksheet(OUT, "All")
+addWorksheet(OUT, "Sex Age")
+addWorksheet(OUT, "Race Ethnicity")
+addWorksheet(OUT, "Insurance")
+addWorksheet(OUT, "Managed Care")
+
+# Write the data to the sheets
+writeData(OUT, sheet = "All", x = uds2014to2019.t3a.t3b.t4_rel)
+writeData(OUT, sheet = "Sex Age", x = sex_pivot3)
+writeData(OUT, sheet = "Race Ethnicity", x = eth_pivot3)
+writeData(OUT, sheet = "Insurance", x = insure_pivot3)
+writeData(OUT, sheet = "Managed Care", x = mc_pivot3)
+
+# Reorder worksheets
+#worksheetOrder(OUT) <- c(3,2,1) # no need to reorder at the moment
+
+# Export the file
+saveWorkbook(OUT, "relevant_vars_2014to2019_pivoted_T3A_T3B_T4.xlsx", overwrite = TRUE)
+
+```

@@ -1,0 +1,320 @@
+---
+title: "Stacking 2014-2019"
+author: "Gagarin Zhao"
+date: "8/13/2020"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(openxlsx)
+```
+
+
+Export years 2014-2019 joined as XLSX. Following years can be added as time goes on.
+
+```{r Binding all years to date, table 6B}
+
+uds2014to2019.t6b = bind_rows(uds2014info.t6b, uds2015info.t6b, uds2016info.t6b, uds2017info.t6b, uds2018info.t6b, uds2019info.t6b)
+
+```
+
+
+
+renaming for easier usage in PowerBI. Other variables can be quickly added here.
+
+```{r table 6B}
+uds2014to2019.t6b = uds2014to2019.t6b %>% 
+  rename(prenatal_care_referral_only = T6B_L0_C0,
+         num_pat_under_15 = T6b_L1_Ca, #section A
+         num_pat_15_19 = T6b_L2_Ca,
+         num_pat_20_24 = T6b_L3_Ca,
+         num_pat_25_44 = T6b_L4_Ca,
+         num_pat_45_plus = T6b_L5_Ca,
+         total_patients_prenatal = T6b_L6_Ca,
+         #section B
+         first_trim_vis_center = T6b_L7_Ca,
+         first_trim_vis_anotherprov =  T6b_L7_Cb,
+         sec_trim_vis_center = T6b_L8_Ca,
+         sec_trim_vis_anotherprov = T6b_L8_Cb,
+         thir_trim_vis_center = T6b_L9_Ca,
+         thir_trim_vis_anotherprov = T6b_L9_Cb,
+         #section C
+         total_pat_2nd_bday = T6b_L10_Ca,
+         num_charts_sampled_immu = T6b_L10_Cb,
+         num_pat_immunized = T6b_L10_Cc,
+         #section D
+         total_fem_pat_23_64 = T6b_L11_Ca,
+         num_charts_sampled_cerv = T6b_L11_Cb,
+         num_pat_test_cerv = T6b_L11_Cc,
+         #section E
+         total_pat_3_17 = T6b_L12_Ca,
+         num_charts_sampled_childBMI = T6b_L12_Cb,
+         num_pat_childBMI_counsel = T6b_L12_Cc,
+         #section F
+         total_pat_18_plus_BMI = T6b_L13_Ca,
+         num_charts_sampled_BMI = T6b_L13_Cb,
+         num_pat_BMI_counsel = T6b_L13_Cc,
+         #section G
+         total_pat_18_plus_tob = T6b_L14a_Ca,
+         num_charts_sampled_tob = T6b_L14a_Cb,
+         num_pat_assessed_tob = T6b_L14a_Cc,
+         #section H
+         total_pat_5_64_asthma = T6b_L16_Ca,
+         num_charts_sampled_asthma = T6b_L16_Cb,
+         num_pat_asthma_plan = T6b_L16_Cc,
+         #section I
+         total_pat_18_plus_CAD = T6B_L17_Ca, 
+         num_charts_sampled_CAD = T6B_L17_Cb,
+         num_pat_therapy_CAD = T6B_L17_Cc,
+         #section I - new 2019 (21 yo instead of 18)
+         total_pat_21_plus_CAD = T6B_L17a_Ca, 
+         num_charts_sampled_CAD_21 = T6B_L17a_Cb,
+         num_pat_therapy_CAD_21 = T6B_L17a_Cc,
+         #section J
+         total_pat_18_plus_IVD = T6B_L18_Ca,
+         num_charts_sampled_IVD = T6B_L18_Cb,
+         num_pat_aspirin_IVD = T6B_L18_Cc,
+         #section K
+         total_pat_50_75 = T6B_L19_Ca,
+         num_charts_sampled_colo = T6B_L19_Cb,
+         num_pat_screened_colo = T6B_L19_Cc,
+         #section L
+         total_pat_diag_HIV = T6b_L20_Ca,
+         num_charts_sampled_HIV = T6b_L20_Cb,
+         num_pat_90_days_HIV = T6b_L20_Cc,
+         #section M
+         total_pat_12_plus = T6b_L21_Ca,
+         num_charts_sampled_depression = T6b_L21_Cb,
+         num_pat_depression_followup = T6b_L21_Cc,
+         #section N
+         total_pat_6_9_caries_risk = T6b_L22_Ca,
+         num_charts_sampled_sealant = T6b_L22_Cb,
+         num_pat_sealant = T6b_L22_Cc
+         )
+
+```
+
+
+Add column of shortened health center names:
+
+```{r add shortened HC names}
+HC_short = 
+  readxl::read_excel(".\\UDS_Name_&_HC_Name.xlsx", sheet = "Sheet1") 
+
+uds2014to2019.t6b = uds2014to2019.t6b %>% 
+  mutate(HealthCenterName_original = HealthCenterName,
+    HealthCenterName = str_to_title(HealthCenterName)) %>%
+  left_join(HC_short, by = "HealthCenterName") %>% 
+  arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
+                                             
+janitor::remove_empty(uds2014to2019.t6b, which = c("rows", "cols"), quiet = TRUE)
+
+is.na(uds2014to2019.t6b) = uds2014to2019.t6b == "NaN"
+
+write.xlsx(uds2014to2019.t6b, ".\\uds2014to2019info_T6B.xlsx", overwrite = TRUE)
+```
+
+Split table into the different clinical measures:
+
+```{r split into different dfs to be exported into differtn sheets}
+secA_age_cat_prenatal = uds2014to2019.t6b %>% 
+  select(HC_name, 
+         HealthCenterName, 
+         HealthCenterName_original,
+         BHCMISID, 
+         ReportingYear, 
+         prenatal_care_referral_only,
+         num_pat_under_15,
+         num_pat_15_19,
+         num_pat_20_24,
+         num_pat_25_44,
+         num_pat_45_plus,
+         total_patients_prenatal
+         )
+secB_early_ent_prenatal = uds2014to2019.t6b %>% 
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         prenatal_care_referral_only,
+         first_trim_vis_center,
+         first_trim_vis_anotherprov,
+         sec_trim_vis_center,
+         sec_trim_vis_anotherprov,
+         thir_trim_vis_center,
+         thir_trim_vis_anotherprov
+         )
+secC_child_immu = uds2014to2019.t6b %>% 
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         total_pat_2nd_bday,
+         num_charts_sampled_immu,
+         num_pat_immunized
+         )
+secD_cervical = uds2014to2019.t6b %>% 
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         total_fem_pat_23_64,
+         num_charts_sampled_cerv,
+         num_pat_test_cerv
+         )
+secE_weight_child = uds2014to2019.t6b %>% 
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         total_pat_3_17,
+         num_charts_sampled_childBMI,
+         num_pat_childBMI_counsel
+         )
+secF_BMI_adult = uds2014to2019.t6b %>% 
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         total_pat_18_plus_BMI,
+         num_charts_sampled_BMI,
+         num_pat_BMI_counsel
+         )
+secG_tobacco = uds2014to2019.t6b %>% 
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         total_pat_18_plus_tob,
+         num_charts_sampled_tob,
+         num_pat_assessed_tob
+         )
+secH_asthma = uds2014to2019.t6b %>% 
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         total_pat_5_64_asthma,
+         num_charts_sampled_asthma,
+         num_pat_asthma_plan
+         )
+secI_CAD = uds2014to2019.t6b %>% 
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         total_pat_18_plus_CAD,
+         num_charts_sampled_CAD,
+         num_pat_therapy_CAD,
+         total_pat_21_plus_CAD,
+         num_charts_sampled_CAD_21,
+         num_pat_therapy_CAD_21
+         ) #including both 18+ and 21+ of data.
+secJ_IVD = uds2014to2019.t6b %>% 
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         total_pat_18_plus_IVD,
+         num_charts_sampled_IVD,
+         num_pat_aspirin_IVD
+         )
+secK_colorectal = uds2014to2019.t6b %>% 
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         total_pat_50_75,
+         num_charts_sampled_colo,
+         num_pat_screened_colo
+         )
+secL_HIV = uds2014to2019.t6b %>% 
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         total_pat_diag_HIV,
+         num_charts_sampled_HIV,
+         num_pat_90_days_HIV
+         )
+secM_depression = uds2014to2019.t6b %>% 
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         total_pat_12_plus,
+         num_charts_sampled_depression,
+         num_pat_depression_followup
+         )
+secN_sealants = uds2014to2019.t6b %>% 
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         total_pat_6_9_caries_risk,
+         num_charts_sampled_sealant,
+         num_pat_sealant
+         )
+```
+
+
+
+Export excel sheet for table 6B 2014-2019:
+
+```{r}
+# Create a blank workbook
+OUT <- createWorkbook()
+
+# Add some sheets to the workbook
+addWorksheet(OUT, "A - Prenatal Age Categories")
+addWorksheet(OUT, "B - Early Entry Prenatal")
+addWorksheet(OUT, "C - Childhood Immunization")
+addWorksheet(OUT, "D - Cervical Cancer Screening")
+addWorksheet(OUT, "E - Child Weight Assessment")
+addWorksheet(OUT, "F - Adult BMI Screening")
+addWorksheet(OUT, "G - Tobacco Screening")
+addWorksheet(OUT, "H - Asthma Planning")
+addWorksheet(OUT, "I - CVD Therapy")
+addWorksheet(OUT, "J - IVD Therapy")
+addWorksheet(OUT, "K - Colorectal Cancer Screening")
+addWorksheet(OUT, "L - HIV Linkage to Care")
+addWorksheet(OUT, "M - Depression Screening")
+addWorksheet(OUT, "N - Child Dental Sealant")
+# Write the data to the sheets
+writeData(OUT, sheet = "A - Prenatal Age Categories", x = secA_age_cat_prenatal)
+writeData(OUT, sheet = "B - Early Entry Prenatal", x = secB_early_ent_prenatal)
+writeData(OUT, sheet = "C - Childhood Immunization", x = secC_child_immu)
+writeData(OUT, sheet = "D - Cervical Cancer Screening", x = secD_cervical)
+writeData(OUT, sheet = "E - Child Weight Assessment", x = secE_weight_child)
+writeData(OUT, sheet = "F - Adult BMI Screening", x = secF_BMI_adult)
+writeData(OUT, sheet = "G - Tobacco Screening", x = secG_tobacco)
+writeData(OUT, sheet = "H - Asthma Planning", x = secH_asthma)
+writeData(OUT, sheet = "I - CVD Therapy", x = secI_CAD)
+writeData(OUT, sheet = "J - IVD Therapy", x = secJ_IVD)
+writeData(OUT, sheet = "K - Colorectal Cancer Screening", x = secK_colorectal)
+writeData(OUT, sheet = "L - HIV Linkage to Care", x = secL_HIV)
+writeData(OUT, sheet = "M - Depression Screening", x = secM_depression)
+writeData(OUT, sheet = "N - Child Dental Sealant", x = secN_sealants)
+
+# Reorder worksheets
+#worksheetOrder(OUT) <- c(3,2,1) # no need to reorder at the moment
+
+# Export the file
+saveWorkbook(OUT, "quality_of_care_final_variables_6b_2014_2019.xlsx", overwrite = TRUE)
+
+```

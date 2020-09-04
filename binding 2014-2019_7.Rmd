@@ -1,0 +1,135 @@
+---
+title: "Stacking 2014-2019 table 7"
+author: "Gagarin Zhao"
+date: "8/27/2020"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(openxlsx)
+```
+
+
+Export years 2014-2019 joined as XLSX. Following years can be added as time goes on.
+
+```{r Binding all years to date, table 6B}
+
+uds2014to2019.t7 = bind_rows(uds2014info.t7, uds2015info.t7, uds2016info.t7, uds2017info.t7, uds2018info.t7, uds2019info.t7)
+```
+
+
+Selecting only TOTAL rows, ignoring race/ethnicity for now, renaming for easier usage in PowerBI. Other variables can be quickly added here.
+
+```{r table 6B}
+uds2014to2019.t7 = uds2014to2019.t7 %>% 
+  select(HealthCenterName,
+         BHCMISID,
+         ReportingYear,
+         HIV_pos_preg_women = T7_L0_C0, #section A - deliveries and birth weight
+         deliveries_performed = T7_L2_C0,
+         total_deliveries = T7_Li_C1a,
+         live_births_below_1500g = T7_Li_C1b,
+         live_births_1500_2499g = T7_Li_C1c,
+         live_births_above_2500g = T7_Li_C1d,
+         #section B - high blood pressure
+         total_pat_hypertension_18_85 = T7_Li_C2a,
+         total_num_charts_samp_hypertension = T7_Li_C2b,
+         total_pat_hypertension_controlled = T7_Li_C2c,
+         #section C - Diabetes
+         total_pat_diabetes_18_75 = T7_Li_C3a,
+         total_num_charts_samp_diabetes = T7_Li_C3b,
+         total_pat_HbAlc_under8 = T7_Li_C3d1,
+         total_pat_HbAlc_8_9 = T7_Li_C3e,
+         total_pat_HbAlc_over9_ornotest = T7_Li_C3f
+         )
+
+```
+
+
+Add column of shortened health center names:
+
+```{r add shortened HC names}
+HC_short = 
+  readxl::read_excel(".\\UDS_Name_&_HC_Name.xlsx", sheet = "Sheet1") 
+
+uds2014to2019.t7 = uds2014to2019.t7 %>% 
+  mutate(HealthCenterName_original = HealthCenterName,
+    HealthCenterName = str_to_title(HealthCenterName)) %>%
+  left_join(HC_short, by = "HealthCenterName") %>% 
+  arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
+                                             
+janitor::remove_empty(uds2014to2019.t7, which = c("rows", "cols"), quiet = TRUE)
+
+is.na(uds2014to2019.t7) = uds2014to2019.t7 == "NaN"
+
+write.xlsx(uds2014to2019.t7, ".\\uds2014to2019info_T7.xlsx", overwrite = TRUE)
+```
+
+Split table into the different clinical measures:
+
+```{r split into different dfs to be exported into differtn sheets}
+secA_deliveries_birthweight = uds2014to2019.t7 %>% 
+  select(HC_name, 
+         HealthCenterName, 
+         HealthCenterName_original,
+         BHCMISID, 
+         ReportingYear, 
+         HIV_pos_preg_women, #section A - deliveries and birth weight
+         deliveries_performed,
+         total_deliveries,
+         live_births_below_1500g,
+         live_births_1500_2499g,
+         live_births_above_2500g
+         )
+secB_hypertension = uds2014to2019.t7 %>%  #section B - hypertension
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         total_pat_hypertension_18_85,
+         total_num_charts_samp_hypertension,
+         total_pat_hypertension_controlled
+         )
+secC_diabetes = uds2014to2019.t7 %>%  #section C - diabetes
+  select(HC_name,
+         HealthCenterName, 
+         HealthCenterName_original, 
+         BHCMISID, 
+         ReportingYear,
+         total_pat_diabetes_18_75,
+         total_num_charts_samp_diabetes,
+         total_pat_HbAlc_under8,
+         total_pat_HbAlc_8_9,
+         total_pat_HbAlc_over9_ornotest
+         )
+```
+
+
+
+Export excel sheet for table 6B 2014-2019:
+
+```{r}
+# Create a blank workbook
+OUT <- createWorkbook()
+
+# Add some sheets to the workbook
+addWorksheet(OUT, "A - Deliveries and Birth Weight")
+addWorksheet(OUT, "B - Hypertension")
+addWorksheet(OUT, "C - Diabetes")
+
+# Write the data to the sheets
+writeData(OUT, sheet = "A - Deliveries and Birth Weight", x = secA_deliveries_birthweight)
+writeData(OUT, sheet = "B - Hypertension", x = secB_hypertension)
+writeData(OUT, sheet = "C - Diabetes", x = secC_diabetes)
+
+
+# Reorder worksheets
+#worksheetOrder(OUT) <- c(3,2,1) # no need to reorder at the moment
+
+# Export the file
+saveWorkbook(OUT, "Table7_final_variables_2014_2019.xlsx", overwrite = TRUE)
+
+```
