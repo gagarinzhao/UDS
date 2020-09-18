@@ -1,0 +1,66 @@
+---
+title: "Updating site info"
+author: "Gagarin Zhao"
+date: "9/15/2020"
+output: github_document
+---
+
+loading knitter and packages:
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(openxlsx)
+```
+
+## R markdown
+
+This is when I imported and cleaned my data. I labeled the relevant variables.
+
+2019 info and table 8a 9d 9e: 
+```{r import and cleaning center info/table5}
+uds2019centerinfo = 
+  readxl::read_excel(".\\UDS2019DataDumpLA17Aug2020.xlsx", sheet = "HealthCenterInfo")
+
+
+uds2019centersiteinfo = 
+  readxl::read_excel(".\\UDS2019DataDumpLA17Aug2020.xlsx", sheet = "HealthCenterSiteInfo")
+
+uds2018centersiteinfo = 
+  readxl::read_excel(".\\UDS2018DataDumpLA20Aug2019.xlsx", sheet = "HealthCenterSiteInfo")
+
+siteinfo = 
+  readxl::read_excel(".\\Site Info.xlsx", sheet = "Site Info")
+
+
+#merge 2018 and 2019 to find new sites in 2019:
+
+newsites2019 = anti_join(uds2019centersiteinfo, uds2018centersiteinfo, by = "SiteStreetAddress")
+
+newsites2019_byname = anti_join(uds2019centersiteinfo, uds2018centersiteinfo, by = "SiteName")
+
+newsites2019_1 = anti_join(uds2018centersiteinfo, uds2019centersiteinfo, by = "SiteStreetAddress")
+
+newsites2019_byname_1 = anti_join(uds2018centersiteinfo, uds2019centersiteinfo, by = "SiteName")
+
+sites_2019 = bind_rows(newsites2019, siteinfo) %>% 
+  arrange(SiteStreetAddress)
+  
+
+
+#stack:
+
+
+siteinfo1 = bind_rows(siteinfo, uds2019centersiteinfo)
+
+siteinfo2 = siteinfo1[!duplicated(siteinfo1$SiteStreetAddress), ]
+
+
+write.xlsx(sites_2019, "C:\\Users\\GagarinZhao\\Documents\\Work\\2019_sites.xlsx", overwrite = TRUE)
+
+
+```
+
+
+
+

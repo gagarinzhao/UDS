@@ -1,28 +1,21 @@
----
-title: "Binding Selected CQM Table 7 Demographics 2014-2019"
-author: "Gagarin Zhao"
-date: "8/27/2020"
-output: github_document
----
+Binding Selected CQM Table 7 Demographics 2014-2019
+================
+Gagarin Zhao
+8/27/2020
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error = TRUE)
-library(tidyverse)
-library(openxlsx)
-```
+Export years 2014-2019 joined as XLSX. Following years can be added as
+time goes on.
 
-
-Export years 2014-2019 joined as XLSX. Following years can be added as time goes on.
-
-```{r Binding all years to date, table 7}
-
+``` r
 uds2014to2019.t7 = bind_rows(uds2014info.t7, uds2015info.t7, uds2016info.t7, uds2017info.t7, uds2018info.t7, uds2019info.t7)
 ```
 
+    ## Error in list2(...): object 'uds2014info.t7' not found
 
-Selecting only TOTAL rows, ignoring race/ethnicity for now, renaming for easier usage in PowerBI. Other variables can be quickly added here.
+Selecting only TOTAL rows, ignoring race/ethnicity for now, renaming for
+easier usage in PowerBI. Other variables can be quickly added here.
 
-```{r table 7}
+``` r
 uds2014to2019.t7_demographics = uds2014to2019.t7 %>% 
   select(HealthCenterName,
          BHCMISID,
@@ -228,7 +221,6 @@ uds2014to2019.t7_demographics = uds2014to2019.t7 %>%
          B_num_charts_samp_hypertension_refused_race_eth = T7_Lh_C2b,   
          B_hypertension_controlled_refused_race_eth = T7_Lh_C2c,
 
-
          ######section C - Diabetes
          C_total_pat_diabetes_18_75 = T7_Li_C3a,
          C_total_num_charts_samp_diabetes = T7_Li_C3b,
@@ -366,13 +358,13 @@ uds2014to2019.t7_demographics = uds2014to2019.t7 %>%
          C_pat_HbAlc_8_9_refused_race_eth = T7_Lh_C3e, 
          C_pat_HbAlc_over9_ornotest_refused_race_eth = T7_Lh_C3f
          )
-
 ```
 
+    ## Error in eval(lhs, parent, parent): object 'uds2014to2019.t7' not found
 
 Add column of shortened health center names:
 
-```{r add shortened HC names}
+``` r
 HC_short = 
   readxl::read_excel(".\\UDS_Name_&_HC_Name.xlsx", sheet = "Sheet1") 
 
@@ -381,18 +373,25 @@ uds2014to2019.t7_demographics = uds2014to2019.t7_demographics %>%
     HealthCenterName = str_to_title(HealthCenterName)) %>%
   left_join(HC_short, by = "HealthCenterName") %>% 
   arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
-                                             
-janitor::remove_empty(uds2014to2019.t7_demographics, which = c("rows", "cols"), quiet = TRUE)
-
-is.na(uds2014to2019.t7_demographics) = uds2014to2019.t7_demographics == "NaN"
-
 ```
 
+    ## Error in eval(lhs, parent, parent): object 'uds2014to2019.t7_demographics' not found
 
+``` r
+janitor::remove_empty(uds2014to2019.t7_demographics, which = c("rows", "cols"), quiet = TRUE)
+```
+
+    ## Error in is.data.frame(x): object 'uds2014to2019.t7_demographics' not found
+
+``` r
+is.na(uds2014to2019.t7_demographics) = uds2014to2019.t7_demographics == "NaN"
+```
+
+    ## Error in eval(expr, envir, enclos): object 'uds2014to2019.t7_demographics' not found
 
 Export excel sheet for table 6B 2014-2019:
 
-```{r}
+``` r
 # Create a blank workbook
 OUT <- createWorkbook()
 
@@ -401,12 +400,14 @@ addWorksheet(OUT, "Table 7 Demographics")
 
 # Write the data to the sheets
 writeData(OUT, sheet = "Table 7 Demographics", x = uds2014to2019.t7_demographics)
+```
 
+    ## Error in writeData(OUT, sheet = "Table 7 Demographics", x = uds2014to2019.t7_demographics): object 'uds2014to2019.t7_demographics' not found
 
+``` r
 # Reorder worksheets
 #worksheetOrder(OUT) <- c(3,2,1) # no need to reorder at the moment
 
 # Export the file
 #saveWorkbook(OUT, "relevant_vars_2014to2019_T7_demographics.xlsx", overwrite = TRUE)
-
 ```

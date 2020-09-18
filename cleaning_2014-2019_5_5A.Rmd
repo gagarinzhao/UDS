@@ -1,0 +1,220 @@
+---
+title: "Cleaning Staffing Tables 5, 5A 2014-2019"
+author: "Gagarin Zhao"
+date: "9/18/2020"
+output: github_document
+---
+
+
+loading knitter and packages:
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE, error = TRUE)
+library(tidyverse)
+library(labelled)
+library(openxlsx)
+```
+
+## 2014
+
+This is when I imported and cleaned my data. I labeled the relevant variables.
+
+```{r import and cleaning center info/table5 2014}
+uds2014centerinfo = 
+  readxl::read_excel(".\\UDS2014DataDumpLA31Jul2015.xlsx", sheet = "HealthCenterInfo") %>% 
+  mutate(HealthCenterName = str_to_title(HealthCenterName)) 
+
+
+uds2014table5 = 
+  readxl::read_excel(".\\UDS2014DataDumpLA31Jul2015.xlsx", sheet = "Table5") %>% 
+  select(-GrantNumber)
+
+```
+
+Loaded in table 5, removed grant number column, kept only part time and full time staff values.
+
+```{r import and cleaning table 5a 2014}
+uds2014table5a = 
+  readxl::read_excel(".\\UDS2014DataDumpLA31Jul2015.xlsx", sheet = "Table5A") %>% 
+  select(-GrantNumber)
+
+uds2014table5a = uds2014table5a[,!grepl("Cc$|Cd$",names(uds2014table5a))] #removing locum and on-call staff, only keeping columns a and b
+
+```
+
+
+Joined health center info, table 5, 5a by BHCMISID:
+
+```{r join tables 2014}
+uds2014info.t5.T5A = full_join(uds2014centerinfo, uds2014table5, by = "BHCMISID") %>% 
+  full_join(uds2014table5a, by = "BHCMISID")
+
+
+```
+
+
+## 2015
+
+
+```{r import and cleaning center info/table5 2015}
+uds2015centerinfo = 
+  readxl::read_excel(".\\UDS2015DataDumpLA22Aug2016.xlsx", sheet = "HealthCenterInfo") %>% 
+  mutate(HealthCenterName = str_to_title(HealthCenterName))
+
+
+uds2015table5 = 
+  readxl::read_excel(".\\UDS2015DataDumpLA22Aug2016.xlsx", sheet = "Table5") %>% 
+  select(-GrantNumber)
+
+```
+
+Loaded in table 5, removed grant number column, kept only part time and full time staff values.
+
+```{r import and cleaning table 5a 2015}
+uds2015table5a =
+  readxl::read_excel(".\\UDS2015DataDumpLA22Aug2016.xlsx", sheet = "Table5A") %>%
+  select(-GrantNumber)
+
+uds2015table5a = uds2015table5a[,!grepl("Cc$|Cd$",names(uds2015table5a))] #removing locum and on-call staff, only keeping columns a and b
+
+```
+
+
+Joined health center info, table 5, 5a by BHCMISID:
+
+```{r join tables 2015}
+uds2015info.t5.T5A = full_join(uds2015centerinfo, uds2015table5, by = "BHCMISID") %>% 
+  full_join(uds2015table5a, by = "BHCMISID")
+
+```
+
+
+## 2016
+
+```{r import and cleaning center info/table5 2016}
+uds2016centerinfo = 
+  readxl::read_excel(".\\UDS2016DataDumpLA21Aug2017.xlsx", sheet = "HealthCenterInfo") %>% 
+  mutate(HealthCenterName = str_to_title(HealthCenterName))
+
+
+uds2016table5 = 
+  readxl::read_excel(".\\UDS2016DataDumpLA21Aug2017.xlsx", sheet = "Table5") %>% 
+  select(-GrantNumber)
+
+```
+
+Loaded in table 5, removed grant number column, kept only part time and full time staff values.
+
+```{r import and cleaning table 5a 2016}
+uds2016table5a = 
+  readxl::read_excel(".\\UDS2016DataDumpLA21Aug2017.xlsx", sheet = "Table5A") %>% 
+  select(-GrantNumber)
+
+uds2016table5a = uds2016table5a[,!grepl("Cc$|Cd$",names(uds2016table5a))] #removing locum and on-call staff, only keeping columns a and b
+
+
+```
+
+
+Joined health center info, table 5, 5a by BHCMISID:
+
+```{r join tables 2016}
+uds2016info.t5.T5A = full_join(uds2016centerinfo, uds2016table5, by = "BHCMISID") %>% 
+  full_join(uds2016table5a, by = "BHCMISID")
+
+
+```
+
+## 2017
+
+```{r import and cleaning center info/table5 2017}
+uds2017centerinfo = 
+  readxl::read_excel(".\\UDS2017DataDumpLA14Aug2018.xlsx", sheet = "HealthCenterInfo") %>% 
+  mutate(HealthCenterName = str_to_title(HealthCenterName))
+
+
+uds2017table5 = 
+  readxl::read_excel(".\\UDS2017DataDumpLA14Aug2018.xlsx", sheet = "Table5") %>% 
+  select(-GrantNumber)
+
+```
+
+Loaded in table 5, removed grant number column, kept only part time and full time staff values.
+
+```{r import and cleaning table 5a 2017}
+uds2017table5a = 
+  readxl::read_excel(".\\UDS2017DataDumpLA14Aug2018.xlsx", sheet = "Table5A") %>% 
+  select(-GrantNumber)
+
+uds2017table5a = uds2017table5a[,!grepl("Cc$|Cd$",names(uds2017table5a))] #removing locum and on-call staff, only keeping columns a and b
+
+```
+
+
+Joined health center info, table 5, 5a by BHCMISID:
+
+```{r join tables 2017}
+uds2017info.t5.T5A = full_join(uds2017centerinfo, uds2017table5, by = "BHCMISID") %>% 
+  full_join(uds2017table5a, by = "BHCMISID")
+
+
+```
+
+## 2018
+
+
+```{r import and cleaning center info/table5 2018}
+uds2018centerinfo = 
+  readxl::read_excel(".\\UDS2018DataDumpLA20Aug2019.xlsx", sheet = "HealthCenterInfo") %>% 
+  mutate(HealthCenterName = str_to_title(HealthCenterName))
+
+
+uds2018table5 = 
+  readxl::read_excel(".\\UDS2018DataDumpLA20Aug2019.xlsx", sheet = "Table5") %>% 
+  select(-GrantNumber)
+
+```
+
+Loaded in table 5, removed grant number column, kept only part time and full time staff values.
+
+```{r import and cleaning table 5a 2018}
+uds2018table5a = 
+  readxl::read_excel(".\\UDS2018DataDumpLA20Aug2019.xlsx", sheet = "Table5A") %>% 
+  select(-GrantNumber)
+
+uds2018table5a = uds2018table5a[,!grepl("Cc$|Cd$",names(uds2018table5a))] #removing locum and on-call staff, only keeping columns a and b
+
+```
+
+
+Joined health center info, table 5, 5a by BHCMISID:
+
+```{r join tables 2018}
+uds2018info.t5.T5A = full_join(uds2018centerinfo, uds2018table5, by = "BHCMISID") %>% 
+  full_join(uds2018table5a, by = "BHCMISID")
+
+```
+
+
+
+## 2019
+
+```{r import and cleaning center info/table5 2019}
+uds2019centerinfo = 
+  readxl::read_excel(".\\UDS2019DataDumpLA17Aug2020.xlsx", sheet = "HealthCenterInfo") %>% 
+  mutate(HealthCenterName = str_to_title(HealthCenterName))
+
+
+uds2019table5 = 
+  readxl::read_excel(".\\UDS2019DataDumpLA17Aug2020.xlsx", sheet = "Table5") %>% 
+  select(-GrantNumber)
+
+```
+
+This year does not have table 5A
+
+Joined health center info, table 5, 5a by BHCMISID:
+
+```{r join tables 2019}
+uds2019info.t5 = full_join(uds2019centerinfo, uds2019table5, by = "BHCMISID")
+```

@@ -1,0 +1,208 @@
+---
+title: "Binding Finance Tables 9, 9D, 9E 2014-2019"
+author: "Gagarin Zhao"
+date: "9/9/2020"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error = TRUE)
+library(tidyverse)
+library(openxlsx)
+```
+
+
+Export years 2014-2019 joined as XLSX. Following years can be added as time goes on.
+
+```{r Binding all years to date, table 9, 9D, 9E}
+
+uds2014to2019.t8a.t9d.t9e = bind_rows(uds2014info.t8a.t9d.t9e, uds2015info.t8a.t9d.t9e, uds2016info.t8a.t9d.t9e, uds2017info.t8a.t9d.t9e, uds2018info.t8a.t9d.t9e, uds2019info.t8a.t9d.t9e)
+```
+
+
+selecting and renaming variables in the process
+
+```{r seleting variables}
+uds2014to2019.t8a.t9d.t9e_rel = uds2014to2019.t8a.t9d.t9e %>% 
+  select(HealthCenterName,
+         BHCMISID,
+         ReportingYear,
+         #table 8A - costs
+         ## financial cost of medical care - all variables in this section included
+         T8a_med_accruedcost = T8a_L1_Ca,
+         T8a_med_supportcost = T8a_L1_Cb,
+         T8a_med_totalcost = T8a_L1_Cc,
+         
+         T8a_lab_accruedcost = T8a_L2_Ca,
+         T8a_lab_supportcost = T8a_L2_Cb,
+         T8a_lab_totalcost = T8a_L2_Cc,
+         
+         T8a_medotherdirect_accruedcost = T8a_L3_Ca,
+         T8a_medotherdirect_supportcost = T8a_L3_Cb,
+         T8a_medotherdirect_totalcost = T8a_L3_Cc,
+         
+         T8a_totalmed_accruedcost = T8a_L4_Ca,
+         T8a_totalmed_supportcost = T8a_L4_Cb,
+         T8T8a_totalmed_totalcost = T8a_L4_Cc,
+         
+         ## financial cost of other clinical services - all variables in this section included
+         
+         T8a_dental_accruedcost = T8a_L5_Ca,
+         T8a_dental_supportcost = T8a_L5_Cb,
+         T8a_dental_totalcost = T8a_L5_Cc,
+         
+         T8a_mental_accruedcost = T8a_L6_Ca,
+         T8a_mental_supportcost = T8a_L6_Cb,
+         T8a_mental_totalcost = T8a_L6_Cc,
+         
+         T8a_SUD_accruedcost = T8a_L7_Ca,
+         T8a_SUD_supportcost = T8a_L7_Cb,
+         T8a_SUD_totalcost = T8a_L7_Cc,
+         
+         T8a_pharmNOTpharmaceuticals_accruedcost = T8a_L8a_Ca,
+         T8a_pharmNOTpharmaceuticals_supportcost = T8a_L8a_Cb,
+         T8a_pharmNOTpharmaceuticals_totalcost = T8a_L8a_Cc,
+         
+         T8a_pharmaceuticals_accruedcost = T8a_L8b_Ca,
+         T8a_pharmaceuticals_totalcost = T8a_L8b_Cc,
+         
+         T8a_otherprofessional = T8a_L9_Other,
+         T8a_otherprofessional_accruedcost = T8a_L9_Ca,
+         T8a_otherprofessional_supportcost = T8a_L9_Cb,
+         T8a_otherprofessional_totalcost = T8a_L9_Cc,
+         
+         T8a_vision_accruedcost = T8a_L9a_Ca,
+         T8a_vision_supportcost = T8a_L9a_Cb,
+         T8a_vision_totalcost = T8a_L9a_Cc,
+         
+         T8a_totalotherclinical_accruedcost = T8a_L10_Ca,
+         T8a_totalotherclinical_supportcost = T8a_L10_Cb,
+         T8a_totalotherclinical_totalcost = T8a_L10_Cc,
+         
+         ## financial cost of enabling and other services - ONLY INCLUDED TOTALS AT THIS POINT
+         
+         T8a_totalenabling_accruedcost = T8a_L11_Ca,
+         T8a_totalenabling_supportcost = T8a_L11_Cb,
+         T8a_totalenabling_totalcost = T8a_L11_Cc,
+         
+         T8a_totalenablingANDother_accruedcost = T8a_L13_Ca,
+         T8a_totalenablingANDother_supportcost = T8a_L13_Cb,
+         T8a_totalenablingANDother_totalcost = T8a_L13_Cc,
+         
+         ## facility and non-clinical support services
+         
+         T8a_totalfacility_nonclinsupport_accruedcost = T8a_L16_Ca,
+         T8a_grandtotal_accruedcost = T8a_L17_Ca,
+         T8a_grandtotal_withdonations = T8a_L19_Cc,
+         
+         
+         ### TABLE 9D - patient-related revenue
+         
+         T9d_totalmedicaid_fullcharges = T9D_L3_Ca,
+         T9d_totalmedicaid_amountcollected = T9D_L3_Cb,
+         T9d_totalmedicaid_allowance = T9D_L3_Cd,
+         
+         T9d_totalmedicare_fullcharges = T9D_L6_Ca,
+         T9d_totalmedicare_amountcollected = T9D_L6_Cb,
+         T9d_totalmedicare_allowance = T9D_L6_Cd,
+         
+         T9d_totalotherpublic_fullcharges = T9D_L9_Ca,
+         T9d_totalotherpublic_amountcollected = T9D_L9_Cb,
+         T9d_totalotherpublic_allowance = T9D_L9_Cd,
+         
+         T9d_totalprivate_fullcharges = T9D_L12_Ca,
+         T9d_totalprivate_amountcollected = T9D_L12_Cb,
+         T9d_totalprivate_allowance = T9D_L12_Cd,
+         
+         T9d_selfpay_fullcharges = T9D_L13_Ca,
+         T9d_selfpay_amountcollected = T9D_L13_Cb,
+         T9d_selfpay_slidingfeediscount = T9D_L13_Ce,
+         T9d_selfpay_baddebtwriteoff = T9D_L13_Cf,
+         
+         T9d_grandtotal_fullcharges = T9D_L14_Ca,
+         T9d_grandtotal_amountcollected = T9D_L14_Cb,
+         T9d_grandtotal_allowance = T9D_L14_Cd,
+         T9d_grandtotal_slidingfeediscount = T9D_L14_Ce,
+         T9d_grandtotal_baddebtwriteoff = T9D_L14_Cf,
+         
+         # table 9E - other revenues
+         
+         ## BPHC grants
+        
+         T9e_migranthealthcenter_grant = T9E_L1a_Ca,
+         T9e_CHT9e_grant = T9E_L1b_Ca,
+         T9e_healthcareforthehomeless_grant = T9E_L1c_Ca,
+         T9e_publichousingprimarycare_grant = T9E_L1e_Ca,
+         T9e_totalhealthcenter_grant = T9E_L1g_Ca,
+         T9e_capitaldev_school_grant = T9E_L1k_Ca,
+         T9e_total_BPHC_grants = T9E_L1_Ca,
+         
+         ## other federal grants
+         
+         T9e_ryanwhite_grant = T9E_L2_Ca,
+         T9e_otherfederal_grant_name = T9E_L3_Other,
+         T9e_EHRincentive_grant = T9E_L3a_Ca,
+         T9e_total_otherfed_grants = T9E_L5_Ca,
+         
+         ## non-federal grants or contracts
+         
+         T9e_stategov_grant_name = T9E_L6_Other,
+         T9e_stategov_grant = T9E_L6_Ca,
+         T9e_indigentcare_grant_name = T9E_L6a_Other,
+         T9e_indigentcare_grant = T9E_L6a_Ca,
+         T9e_localgov_grant_name = T9E_L7_Other,
+         T9e_localgov_grant = T9E_L7_Ca,
+         T9e_foundation_private_grant_name = T9E_L8_Other,
+         T9e_foundation_private_grant = T9E_L8_Ca,
+         T9e_total_nonfed_grants = T9E_L9_Ca,
+         T9e_otherrev_name = T9E_L10_Other,
+         T9e_otherrev = T9E_L10_Ca,
+         T9e_GRAND_total_revenue = T9E_L11_Ca
+  )
+
+         
+
+         
+```
+
+
+
+Add column of shortened health center names:
+
+```{r add shortened HC names}
+HC_short = 
+  readxl::read_excel(".\\UDS_Name_&_HC_Name.xlsx", sheet = "Sheet1") 
+
+uds2014to2019.t8a.t9d.t9e_rel = uds2014to2019.t8a.t9d.t9e_rel %>% 
+  mutate(HealthCenterName_original = HealthCenterName,
+    HealthCenterName = str_to_title(HealthCenterName)) %>%
+  left_join(HC_short, by = "HealthCenterName") %>% 
+  arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
+                                             
+janitor::remove_empty(uds2014to2019.t8a.t9d.t9e_rel, which = c("rows", "cols"), quiet = TRUE)
+
+is.na(uds2014to2019.t8a.t9d.t9e_rel) = uds2014to2019.t8a.t9d.t9e_rel == "NaN"
+
+
+```
+
+
+Export excel sheet with only relevant variables for tables 3a 3b 4:
+
+```{r export file}
+# Create a blank workbook
+OUT <- createWorkbook()
+
+# Add some sheets to the workbook
+addWorksheet(OUT, "Tables 8A, 9D, 9E")
+
+# Write the data to the sheets
+writeData(OUT, sheet = "Tables 8A, 9D, 9E", x = uds2014to2019.t8a.t9d.t9e_rel)
+
+# Reorder worksheets
+#worksheetOrder(OUT) <- c(3,2,1) # no need to reorder at the moment
+
+# Export the file
+#saveWorkbook(OUT, "relevant_vars_2014to2019_T8A_T9D_T9E.xlsx", overwrite = TRUE)
+
+```

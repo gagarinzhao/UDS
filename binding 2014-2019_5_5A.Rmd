@@ -1,12 +1,12 @@
 ---
-title: "Stacking 2014-2019"
+title: "Binding Staffing Tables 5, 5A 2014-2019"
 author: "Gagarin Zhao"
-date: "8/13/2020"
+date: "9/2/2020"
 output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 library(tidyverse)
 library(openxlsx)
 ```
@@ -19,14 +19,13 @@ Table 6a (services) will be compiled separately.
 
 uds2016to2018info.t5.T5A = bind_rows(uds2016info.t5.T5A, uds2017info.t5.T5A, uds2018info.t5.T5A)
 
-write.xlsx(uds2016to2018info.t5.T5A, "C:\\Users\\GagarinZhao\\Documents\\Work\\UDS\\Data Wrangling\\uds2016to2018info_T5_T5A.xlsx", overwrite = TRUE)
 ```
 
 
 Pulling 2019 table 5 data, only variables that exist in previous years:
 
 
-```{r pulling 2019}
+```{r pulling 2019 table 5}
 uds2019info.t5_rel = uds2019info.t5 %>% 
   select(BHCMISID,
          ReportingYear,
@@ -64,13 +63,21 @@ uds2019info.t5_rel = uds2019info.t5 %>%
          T5_L22d_Cb,
          T5_L22d_Cb2,
          T5_L22d_Cc,
+         T5_L23_Ca, # pharmacy FTE
          T5_L29_Ca,
          T5_L29_Cb,
          T5_L29_Cb2,
          T5_L29_Cc,
+         T5_L29a_Ca, # other programs/services FTEs
+         T5_L29b_Ca, # QI staff FTE
+         T5_L33_Ca, # facility and non-clinical support
          T5_L34_Ca,
          T5_L34_Cb,
-         T5_L34_Cb2)
+         T5_L34_Cb2,
+         T5_L12_Ca, # other medical personnel
+         T5_L13_Ca, #lab personnel
+         T5_L14_Ca # x-ray
+  )
 ```
 
 Years 2014 and 2015 columns don't quite match following years. I pull specific columns and do a second bind:
@@ -108,11 +115,21 @@ uds2014info.t5_rel = uds2014info.t5.T5A %>%
          T5_L29_Cb,
          T5_L29_Cc,
          T5_L34_Ca,
-         T5_L34_Cb)
+         T5_L34_Cb,
+         
+         T5_L23_Ca, # pharmacy FTE
+         T5_L29a_Ca, # other programs/services FTEs 
+         #T5_L29b_Ca, # QI staff FTE DOESN"T EXIST IN 2014
+         T5_L33_Ca, # facility and non-clinical support
+         
+         T5_L12_Ca, # other medical personnel
+         T5_L13_Ca, #lab personnel
+         T5_L14_Ca # x-ray
+         )
 
-uds2014info.T5A_rel = uds2014info.t5.T5A %>% 
-  select(#table 5a
-    BHCMISID,
+#T5A
+uds2014info.t5A_rel = uds2014info.t5.T5A %>% 
+  select(BHCMISID,
          ReportingYear,
          HealthCenterName,
          T5A_L1_Ca,
@@ -194,13 +211,24 @@ uds2015info.t5_rel = uds2015info.t5.T5A %>%
          T5_L29_Cb,
          T5_L29_Cc,
          T5_L34_Ca,
-         T5_L34_Cb)
+         T5_L34_Cb,
+         
+         T5_L23_Ca, # pharmacy FTE
+         T5_L29a_Ca, # other programs/services FTEs
+         #T5_L29b_Ca, # QI staff FTE DOES NOT EXIST THIS YEAR
+         T5_L33_Ca, # facility and non-clinical support
+         
+         T5_L12_Ca, # other medical personnel
+         T5_L13_Ca, #lab personnel
+         T5_L14_Ca # x-ray
+         )
 
-uds2015info.T5A_rel = uds2015info.t5.T5A %>% 
-  select(#table 5a
-         BHCMISID,
+#table 5a
+
+uds2015info.t5A_rel = uds2015info.t5.T5A %>% 
+  select(BHCMISID,
          ReportingYear,
-         HealthCenterName,
+         HealthCenterName,         
          T5A_L1_Ca,
          T5A_L1_Cb,
          T5A_L2_Ca,
@@ -249,12 +277,11 @@ uds2015info.T5A_rel = uds2015info.t5.T5A %>%
          T5A_L30a4_Cb
          )
 
-uds2014to2019info.t5.T5A = bind_rows(uds2016to2018info.t5.T5A, uds2014info.t5.T5A_rel, uds2015info.t5.T5A_rel)
+#uds2014to2019info.t5.T5A = bind_rows(uds2016to2018info.t5.T5A, uds2014info.t5.T5A_rel, uds2015info.t5.T5A_rel)
 ```
 
 
-
-Calculating productivity + renaming for easier usage in PowerBI. Other variables can be quickly added here.
+Other variables can be quickly added here.
 
 ```{r table 5}
 T5_rel_numbers = uds2016to2018info.t5.T5A %>% 
@@ -289,26 +316,23 @@ T5_rel_numbers = uds2016to2018info.t5.T5A %>%
          T5_L29_Cb,
          T5_L29_Cc,
          T5_L34_Ca,
-         T5_L34_Cb) %>% 
+         T5_L34_Cb,
+         
+         T5_L23_Ca, # pharmacy FTE
+         T5_L29a_Ca, # other programs/services FTEs
+         T5_L29b_Ca, # QI staff FTE
+         T5_L33_Ca, # facility and non-clinical support
+         
+         
+         T5_L12_Ca, # other medical personnel
+         T5_L13_Ca, #lab personnel
+         T5_L14_Ca # x-ray
+         
+         ) %>% 
   bind_rows(uds2014info.t5_rel, uds2015info.t5_rel, uds2019info.t5_rel) %>% #TACK ON 2014, 2015, 2019
-  mutate(total_phys_vis_by_fte = T5_L8_Cb/T5_L8_Ca, #calculations
-         nurses_vis_by_fte = T5_L11_Cb/T5_L11_Ca,
-         total_NP_PA_CNM_vis_by_fte = T5_L10a_Cb/T5_L10a_Ca,
-         total_med_vis_by_fte = T5_L15_Cb/T5_L15_Ca,
-         total_med_pat_by_fte = T5_L15_Cc/T5_L15_Ca,
-         total_dental_vis_by_fte = T5_L19_Cb/T5_L19_Ca,
-         total_dental_pat_by_fte = T5_L19_Cc/T5_L19_Ca,
-         total_mental_vis_by_fte = T5_L20_Cb/T5_L20_Ca,
-         total_mental_pat_by_fte = T5_L20_Cc/T5_L20_Ca,
-         total_SUD_vis_by_fte = T5_L21_Cb/T5_L21_Ca,
-         total_SUD_pat_by_fte = T5_L21_Cc/T5_L21_Ca,         
-         total_otherprof_vis_by_fte = T5_L22_Cb/T5_L22_Ca,
-         total_otherprof_pat_by_fte = T5_L22_Cc/T5_L22_Ca,   
-         total_vision_vis_by_fte = T5_L22d_Cb/T5_L22d_Ca,
-         total_vision_pat_by_fte = T5_L22d_Cc/T5_L22d_Ca,
-         total_enabling_vis_by_fte = T5_L29_Cb/T5_L29_Ca,
-         total_enabling_pat_by_fte = T5_L29_Cc/T5_L29_Ca,
-         grand_total_vis_by_fte = T5_L34_Cb/T5_L34_Ca,
+  select(BHCMISID,
+         ReportingYear,
+         HealthCenterName,
          ## begin renaming
          phys_fte = T5_L8_Ca,
          phys_vis = T5_L8_Cb,
@@ -325,7 +349,7 @@ T5_rel_numbers = uds2016to2018info.t5.T5A %>%
          total_med_pat = T5_L15_Cc,
          total_dental_fte = T5_L19_Ca,
          total_dental_vis = T5_L19_Cb,
-         total_dental_vis = T5_L19_Cb2,
+         total_dental_virt = T5_L19_Cb2,
          total_dental_pat = T5_L19_Cc,
          total_mental_fte = T5_L20_Ca,
          total_mental_vis = T5_L20_Cb,
@@ -349,9 +373,17 @@ T5_rel_numbers = uds2016to2018info.t5.T5A %>%
          total_enabling_pat = T5_L29_Cc,
          grand_total_fte = T5_L34_Ca,
          grand_total_vis = T5_L34_Cb,
-         grand_total_virt = T5_L34_Cb2
-         ) %>% 
-  select(-T5_L8_Ca:-T5_L34_Cb,-T5_L8_Cb2:-T5_L34_Cb2)
+         grand_total_virt = T5_L34_Cb2,
+         
+         pharmacy_fte = T5_L23_Ca, # pharmacy FTE
+         otherprogramsservices_fte = T5_L29a_Ca, # other programs/services FTEs
+         QI_fte = T5_L29b_Ca, # QI staff FTE
+         total_facility_nonclinical = T5_L33_Ca, # facility and non-clinical support
+         
+         other_med_personnel_fte = T5_L12_Ca, # other medical personnel
+         lab_personnel_fte = T5_L13_Ca, #lab personnel
+         xray_fte = T5_L14_Ca # x-ray
+         )
 ```
 
 Table 5 addendum that was added in 2019 UDS data:
@@ -408,7 +440,9 @@ uds2019info.t5_addendum_rel = uds2019info.t5 %>%
          SUD_othermentalprov_personnel = T5_L21h_Ca1,
          SUD_othermentalprov_vis = T5_L21h_Cb,
          SUD_othermentalprov_virt = T5_L21h_Cb2,
-         SUD_othermentalprov_pat = T5_L21h_Cc
+         SUD_othermentalprov_pat = T5_L21h_Cc,
+         
+
          )
 ```
 
@@ -470,54 +504,8 @@ T5a_rel_numbers = uds2016to2018info.t5.T5A %>%
          T5A_L30a4_Ca,
          T5A_L30a4_Cb
          ) %>% 
-  bind_rows(uds2014info.T5A_rel,uds2015info.T5A_rel) %>% 
-  mutate(ftpt_famphys_mo_by_persons = T5A_L1_Cb/T5A_L1_Ca, #calculations
-        ftpt_genprac_mo_by_persons = T5A_L2_Cb/T5A_L2_Ca,
-        ftpt_internist_mo_by_persons = T5A_L3_Cb/T5A_L3_Ca,
-        ftpt_OBGYN_mo_by_persons = T5A_L4_Cb/T5A_L4_Ca,
-        ftpt_ped_mo_by_persons = T5A_L5_Cb/T5A_L5_Ca,
-        ftpt_otherspecphys_mo_by_persons = T5A_L7_Cb/T5A_L7_Ca,
-        ftpt_NP_mo_by_persons = T5A_L9a_Cb/T5A_L9a_Ca,
-        ftpt_PA_mo_by_persons = T5A_L9b_Cb/T5A_L9b_Ca,
-        ftpt_CNM_mo_by_persons = T5A_L10_Cb/T5A_L10_Ca,
-        ftpt_nurse_mo_by_persons = T5A_L11_Cb/T5A_L11_Ca,
-        ftpt_dentist_mo_by_persons = T5A_L16_Cb/T5A_L16_Ca,
-        ftpt_dentalhyg_mo_by_persons = T5A_L17_Cb/T5A_L17_Ca,
-        ftpt_dentalther_mo_by_persons = T5A_L17a_Cb/T5A_L17a_Ca,
-        ftpt_psychiatrist_mo_by_persons = T5A_L20a_Cb/T5A_L20a_Ca,
-        ftpt_psychologist_mo_by_persons = T5A_L20a1_Cb/T5A_L20a1_Ca,
-        ftpt_socialworker_mo_by_persons = T5A_L20a2_Cb/T5A_L20a2_Ca,
-        ftpt_othermentalhealth_mo_by_persons = T5A_L20b_Cb/T5A_L20b_Ca,
-        ftpt_opthalmologist_mo_by_persons = T5A_L22a_Cb/T5A_L22a_Ca,
-        ftpt_optometrist_mo_by_persons = T5A_L22b_Cb/T5A_L22b_Ca,
-        ftpt_CEO_mo_by_persons = T5A_L30a1_Cb/T5A_L30a1_Ca,
-        ftpt_CMO_mo_by_persons = T5A_L30a2_Cb/T5A_L30a2_Ca,
-        ftpt_CFO_mo_by_persons = T5A_L30a3_Cb/T5A_L30a3_Ca,
-        ftpt_CIO_mo_by_persons = T5A_L30a4_Cb/T5A_L30a4_Ca,
-        
-        ftpt_famphys_yr_by_persons = T5A_L1_Cb/T5A_L1_Ca/12, #YEAR calcs
-        ftpt_genprac_yr_by_persons = T5A_L2_Cb/T5A_L2_Ca/12,
-        ftpt_internist_yr_by_persons = T5A_L3_Cb/T5A_L3_Ca/12,
-        ftpt_OBGYN_yr_by_persons = T5A_L4_Cb/T5A_L4_Ca/12,
-        ftpt_ped_yr_by_persons = T5A_L5_Cb/T5A_L5_Ca/12,
-        ftpt_otherspecphys_yr_by_persons = T5A_L7_Cb/T5A_L7_Ca/12,
-        ftpt_NP_yr_by_persons = T5A_L9a_Cb/T5A_L9a_Ca/12,
-        ftpt_PA_yr_by_persons = T5A_L9b_Cb/T5A_L9b_Ca/12,
-        ftpt_CNM_yr_by_persons = T5A_L10_Cb/T5A_L10_Ca/12,
-        ftpt_nurse_yr_by_persons = T5A_L11_Cb/T5A_L11_Ca/12,
-        ftpt_dentist_yr_by_persons = T5A_L16_Cb/T5A_L16_Ca/12,
-        ftpt_dentalhyg_yr_by_persons = T5A_L17_Cb/T5A_L17_Ca/12,
-        ftpt_dentalther_yr_by_persons = T5A_L17a_Cb/T5A_L17a_Ca/12,
-        ftpt_psychiatrist_yr_by_persons = T5A_L20a_Cb/T5A_L20a_Ca/12,
-        ftpt_psychologist_yr_by_persons = T5A_L20a1_Cb/T5A_L20a1_Ca/12,
-        ftpt_socialworker_yr_by_persons = T5A_L20a2_Cb/T5A_L20a2_Ca/12,
-        ftpt_othermentalhealth_yr_by_persons = T5A_L20b_Cb/T5A_L20b_Ca/12,
-        ftpt_opthalmologist_yr_by_persons = T5A_L22a_Cb/T5A_L22a_Ca/12,
-        ftpt_optometrist_yr_by_persons = T5A_L22b_Cb/T5A_L22b_Ca/12,
-        ftpt_CEO_yr_by_persons = T5A_L30a1_Cb/T5A_L30a1_Ca/12,
-        ftpt_CMO_yr_by_persons = T5A_L30a2_Cb/T5A_L30a2_Ca/12,
-        ftpt_CFO_yr_by_persons = T5A_L30a3_Cb/T5A_L30a3_Ca/12,
-        ftpt_CIO_yr_by_persons = T5A_L30a4_Cb/T5A_L30a4_Ca/12,
+  bind_rows(uds2014info.t5A_rel,uds2015info.t5A_rel) %>% 
+  mutate(
         
          ## begin renaming
         ftpt_famphys_persons = T5A_L1_Ca,
@@ -567,49 +555,10 @@ T5a_rel_numbers = uds2016to2018info.t5.T5A %>%
         ftpt_CIO_persons = T5A_L30a4_Ca,
         ftpt_CIO_mo = T5A_L30a4_Cb
          ) %>% 
-  rowwise() %>% #calculating average of rows
-  mutate(overall_phys_yr_by_persons = mean(c(ftpt_famphys_yr_by_persons,
-                                             ftpt_genprac_yr_by_persons,
-                                             ftpt_internist_yr_by_persons,
-                                             ftpt_OBGYN_yr_by_persons,
-                                             ftpt_ped_yr_by_persons,
-                                             ftpt_otherspecphys_yr_by_persons), na.rm = T),
-         overall_med_yr_by_persons = mean(c(ftpt_famphys_yr_by_persons,
-                                            ftpt_genprac_yr_by_persons,
-                                            ftpt_internist_yr_by_persons,
-                                            ftpt_OBGYN_yr_by_persons, 
-                                            ftpt_ped_yr_by_persons, 
-                                            ftpt_otherspecphys_yr_by_persons, 
-                                            ftpt_NP_yr_by_persons,
-                                            ftpt_PA_yr_by_persons,
-                                            ftpt_CNM_yr_by_persons, 
-                                            ftpt_nurse_yr_by_persons), na.rm = T),
-         grand_total_year_by_persons =  mean(c(ftpt_famphys_yr_by_persons,
-                                               ftpt_genprac_yr_by_persons, 
-                                               ftpt_internist_yr_by_persons,
-                                               ftpt_OBGYN_yr_by_persons, 
-                                               ftpt_ped_yr_by_persons,
-                                               ftpt_otherspecphys_yr_by_persons, 
-                                               ftpt_NP_yr_by_persons, 
-                                               ftpt_PA_yr_by_persons, 
-                                               ftpt_CNM_yr_by_persons, 
-                                               ftpt_nurse_yr_by_persons, 
-                                               ftpt_dentist_yr_by_persons,
-                                               ftpt_dentalhyg_yr_by_persons,
-                                               ftpt_dentalther_yr_by_persons,
-                                               ftpt_psychiatrist_yr_by_persons,
-                                               ftpt_psychologist_yr_by_persons,
-                                               ftpt_socialworker_yr_by_persons,
-                                               ftpt_othermentalhealth_yr_by_persons,
-                                               ftpt_opthalmologist_yr_by_persons,
-                                               ftpt_optometrist_yr_by_persons,
-                                               ftpt_CEO_yr_by_persons,
-                                               ftpt_CMO_yr_by_persons,
-                                               ftpt_CFO_yr_by_persons,
-                                               ftpt_CIO_yr_by_persons), na.rm = T)
-         ) %>% 
   select(-T5A_L1_Ca:-T5A_L30a4_Cb)
 ```
+
+
 
 Add column of shortened health center names:
 
@@ -617,29 +566,26 @@ Add column of shortened health center names:
 HC_short = 
   readxl::read_excel(".\\UDS_Name_&_HC_Name.xlsx", sheet = "Sheet1") 
 
-T5_rel_numbers = T5_rel_numbers %>% left_join(HC_short, by = "HealthCenterName")
-T5a_rel_numbers = T5a_rel_numbers %>% left_join(HC_short, by = "HealthCenterName")
-uds2019info.t5_addendum_rel = uds2019info.t5_addendum_rel %>% left_join(HC_short, by = "HealthCenterName")
-```
+T5_rel_numbers = T5_rel_numbers %>% 
+  mutate(HealthCenterName_original = HealthCenterName,
+    HealthCenterName = str_to_title(HealthCenterName)) %>%
+  left_join(HC_short, by = "HealthCenterName") %>% 
+  arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
+                                             
+janitor::remove_empty(T5_rel_numbers, which = c("rows", "cols"), quiet = TRUE)
 
-Clean up data to make clean export:
-
-```{r clean up rows}
-
-#Table 5
 is.na(T5_rel_numbers) = T5_rel_numbers == "NaN"
-T5_rel_numbers = janitor::remove_empty(T5_rel_numbers, which = c("rows", "cols"), quiet = TRUE)
-T5_rel_numbers = T5_rel_numbers %>% arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
 
-#Table 5a
+
+T5a_rel_numbers = T5a_rel_numbers %>% 
+  mutate(HealthCenterName_original = HealthCenterName,
+    HealthCenterName = str_to_title(HealthCenterName)) %>%
+  left_join(HC_short, by = "HealthCenterName") %>% 
+  arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
+                                             
+janitor::remove_empty(T5a_rel_numbers, which = c("rows", "cols"), quiet = TRUE)
+
 is.na(T5a_rel_numbers) = T5a_rel_numbers == "NaN"
-T5a_rel_numbers = janitor::remove_empty(T5a_rel_numbers, which = c("rows", "cols"), quiet = TRUE)
-T5a_rel_numbers = T5a_rel_numbers %>% arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
-
-#Table 5 addendum (2019 data only)
-is.na(uds2019info.t5_addendum_rel) = uds2019info.t5_addendum_rel == "NaN"
-uds2019info.t5_addendum_rel = janitor::remove_empty(uds2019info.t5_addendum_rel, which = c("rows", "cols"), quiet = TRUE)
-uds2019info.t5_addendum_rel = uds2019info.t5_addendum_rel %>% arrange(HC_name, ReportingYear) %>% select(HC_name, ReportingYear, everything())
 
 ```
 
@@ -664,6 +610,6 @@ writeData(OUT, sheet = "Table5 Addendum (2019 only)", x = uds2019info.t5_addendu
 #worksheetOrder(OUT) <- c(3,2,1) # no need to reorder at the moment
 
 # Export the file
-saveWorkbook(OUT, "relevant_vars_2014to2019_table5_table5a.xlsx", overwrite = FALSE)
+saveWorkbook(OUT, "relevant_vars_2014to2019_table5_table5a_2.xlsx", overwrite = TRUE)
 
 ```

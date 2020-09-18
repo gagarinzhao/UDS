@@ -1,5 +1,5 @@
 ---
-title: "2014-2019 cleaning table 7"
+title: "Cleaning Demographics Tables 3A, 3B, 4 2014-2019"
 author: "Gagarin Zhao"
 date: "8/27/2020"
 output: github_document
@@ -14,12 +14,10 @@ library(labelled)
 library(openxlsx)
 ```
 
-## R markdown
-
 This is when I imported and cleaned my data. I labeled the relevant variables.
 
-2019 info and table 3a 3b 4: 
-```{r import and cleaning center info/table5}
+## 2019 info and table 3a 3b 4: 
+```{r import 2019}
 uds2019centerinfo = 
   readxl::read_excel(".\\UDS2019DataDumpLA17Aug2020.xlsx", sheet = "HealthCenterInfo") %>% 
   select(HealthCenterName, BHCMISID, ReportingYear)
@@ -42,12 +40,11 @@ uds2019info.t3a.t3b.t4 = full_join(uds2019centerinfo, uds2019table3A, by = "BHCM
   full_join(uds2019table3B) %>%
   full_join(uds2019table4)
 
-write.xlsx(uds2019info.t3a.t3b.t4, ".\\uds2019info_T3A_T3B_T4.xlsx", overwrite = TRUE)
 ```
 
 
-2018 info and table 3a 3b 4: 
-```{r import and cleaning center info/table5}
+## 2018 info and table 3a 3b 4: 
+```{r import 2018}
 uds2018centerinfo = 
   readxl::read_excel(".\\UDS2018DataDumpLA20Aug2019.xlsx", sheet = "HealthCenterInfo") %>% 
   select(HealthCenterName, BHCMISID, ReportingYear)
@@ -70,11 +67,10 @@ uds2018info.t3a.t3b.t4 = full_join(uds2018centerinfo, uds2018table3A, by = "BHCM
   full_join(uds2018table3B) %>% 
   full_join(uds2018table4)
 
-write.xlsx(uds2018info.t3a.t3b.t4, ".\\uds2018info_T3A_T3B_T4.xlsx", overwrite = TRUE)
 ```
 
-2017 info and table 3a 3b 4: 
-```{r import and cleaning center info/table5}
+## 2017 info and table 3a 3b 4: 
+```{r import 2017}
 uds2017centerinfo = 
   readxl::read_excel(".\\UDS2017DataDumpLA14Aug2018.xlsx", sheet = "HealthCenterInfo") %>% 
   select(HealthCenterName, BHCMISID, ReportingYear)
@@ -94,12 +90,11 @@ uds2017table4 =
 uds2017info.t3a.t3b.t4 = full_join(uds2017centerinfo, uds2017table3A, by = "BHCMISID") %>% 
   full_join(uds2017table3B) %>% 
   full_join(uds2017table4)
-  
-write.xlsx(uds2017info.t3a.t3b.t4, ".\\uds2017info_T3A_T3B_T4.xlsx", overwrite = TRUE)
+
 ```
 
-2016 info and table 7: 
-```{r import and cleaning center info/table5}
+## 2016 info and table 7: 
+```{r import 2016}
 uds2016centerinfo = 
   readxl::read_excel(".\\UDS2016DataDumpLA21Aug2017.xlsx", sheet = "HealthCenterInfo") %>% 
   select(HealthCenterName, BHCMISID, ReportingYear)
@@ -122,25 +117,24 @@ uds2016info.t3a.t3b.t4 = full_join(uds2016centerinfo, uds2016table3A, by = "BHCM
   full_join(uds2016table3B) %>% 
   full_join(uds2016table4)
 
-write.xlsx(uds2016info.t3a.t3b.t4, ".\\uds2016info_T3A_T3B_T4.xlsx", overwrite = TRUE)
 ```
 
-2015 info and table 3a 3b 4: 
-```{r import and cleaning center info/table5}
+## 2015 info and table 3a 3b 4: 
+```{r import 2015}
 uds2015centerinfo = 
-  readxl::read_excel(".\\EHB UDS2015DataDumpLA22Aug2016.xlsx", sheet = "HealthCenterInfo") %>% 
+  readxl::read_excel(".\\UDS2015DataDumpLA22Aug2016.xlsx", sheet = "HealthCenterInfo") %>% 
   select(HealthCenterName, BHCMISID, ReportingYear)
 
 uds2015table3A = 
-  readxl::read_excel(".\\EHB UDS2015DataDumpLA22Aug2016.xlsx", sheet = "Table3A") %>% 
+  readxl::read_excel(".\\UDS2015DataDumpLA22Aug2016.xlsx", sheet = "Table3A") %>% 
   select(-GrantNumber)
 
 uds2015table3B = 
-  readxl::read_excel(".\\EHB UDS2015DataDumpLA22Aug2016.xlsx", sheet = "Table3B") %>% 
+  readxl::read_excel(".\\UDS2015DataDumpLA22Aug2016.xlsx", sheet = "Table3B") %>% 
   select(-GrantNumber)
 
 uds2015table4 = 
-  readxl::read_excel(".\\EHB UDS2015DataDumpLA22Aug2016.xlsx", sheet = "Table4") %>% 
+  readxl::read_excel(".\\UDS2015DataDumpLA22Aug2016.xlsx", sheet = "Table4") %>% 
   select(-GrantNumber)
 
 #Joined health center info, table 7 by BHCMISID:
@@ -149,12 +143,11 @@ uds2015info.t3a.t3b.t4 = full_join(uds2015centerinfo, uds2015table3A, by = "BHCM
   full_join(uds2015table3B) %>% 
   full_join(uds2015table4)
 
-write.xlsx(uds2015info.t3a.t3b.t4, ".\\uds2015info_T3A_T3B_T4.xlsx", overwrite = TRUE)
 ```
 
 
-2014 info and table 3a 3b 4: 
-```{r import and cleaning center info/table5}
+## 2014 info and table 3a 3b 4: 
+```{r import 2014}
 uds2014centerinfo = 
   readxl::read_excel(".\\UDS2014DataDumpLA31Jul2015.xlsx", sheet = "HealthCenterInfo") %>% 
   select(HealthCenterName, BHCMISID, ReportingYear)
@@ -177,6 +170,5 @@ uds2014info.t3a.t3b.t4 = full_join(uds2014centerinfo, uds2014table3A, by = "BHCM
   full_join(uds2014table3B) %>% 
   full_join(uds2014table4)
 
-write.xlsx(uds2014info.t3a.t3b.t4, ".\\uds2014info_T3A_T3B_T4.xlsx", overwrite = TRUE)
 ```
 
