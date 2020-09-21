@@ -37,23 +37,39 @@ siteinfo =
 
 newsites2019 = anti_join(uds2019centersiteinfo, uds2018centersiteinfo, by = "SiteStreetAddress")
 
-newsites2019_byname = anti_join(uds2019centersiteinfo, uds2018centersiteinfo, by = "SiteName")
+newsites2019_byname = anti_join(uds2019centersiteinfo, uds2018centersiteinfo, by = "SiteName") %>% 
+  mutate(newsite2019 = "Y")
 
 newsites2019_1 = anti_join(uds2018centersiteinfo, uds2019centersiteinfo, by = "SiteStreetAddress")
 
 newsites2019_byname_1 = anti_join(uds2018centersiteinfo, uds2019centersiteinfo, by = "SiteName")
 
-sites_2019 = bind_rows(newsites2019, siteinfo) %>% 
-  arrange(SiteStreetAddress)
-  
+newsites2019_trimmed =
+  uds2019centersiteinfo %>% 
+  select(SiteName, SiteStreetAddress, HealthCenterName) %>% 
+  group_by(SiteName) %>% 
+  filter(n()>1)
+
+siteinfo_trimmed = #from smartsheet
+  siteinfo %>% 
+  select(SiteName, SiteStreetAddress, HealthCenterName)
+
+newsites2019_with2018siteinfo = left_join(newsites2019_trimmed, siteinfo_trimmed, by = "SiteName")  %>% 
+  group_by(SiteName) %>% 
+  filter(n()>1)
+
 
 
 #stack:
 
+newsite2019_plus2018 = bind_rows(newsites2019_byname, siteinfo) %>%
+  select(SiteName, newsite2019, SiteStreetAddress, everything()) %>% 
+  arrange(SiteName) %>% 
 
-siteinfo1 = bind_rows(siteinfo, uds2019centersiteinfo)
 
-siteinfo2 = siteinfo1[!duplicated(siteinfo1$SiteStreetAddress), ]
+
+
+
 
 
 write.xlsx(sites_2019, "C:\\Users\\GagarinZhao\\Documents\\Work\\2019_sites.xlsx", overwrite = TRUE)

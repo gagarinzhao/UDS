@@ -21,7 +21,6 @@ uds2014to2019.t6b = bind_rows(uds2014info.t6b, uds2015info.t6b, uds2016info.t6b,
 ```
 
 
-
 renaming for easier usage in PowerBI. Other variables can be quickly added here.
 
 ```{r table 6B}
